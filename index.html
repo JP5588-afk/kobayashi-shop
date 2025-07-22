@@ -52,10 +52,10 @@
     }
     .grid-container {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 20px;
-      padding: 24px;
-      max-width: 960px;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px;
+      padding: 20px;
+      max-width: 900px;
       margin: 0 auto;
     }
     .card {
@@ -114,33 +114,6 @@
       border-radius: 8px;
       cursor: pointer;
     }
-    .product-page {
-      display: none;
-      text-align: center;
-      padding: 30px;
-    }
-    .back-button {
-      margin-top: 20px;
-      padding: 8px 20px;
-      background-color: #ccc;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    .order-form {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 20px;
-    }
-    .order-form input, .order-form select {
-      margin: 6px 0;
-      padding: 8px;
-      width: 80%;
-      max-width: 320px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-    }
   </style>
 </head>
 <body>
@@ -149,14 +122,11 @@
     <div id="cartIcon" title="購物車" onclick="toggleCartDetails()">0</div>
     <div id="cartDetails"></div>
   </header>
-  <div class="grid-container" id="productGrid">
-    <!-- 商品卡片動態產生 -->
-  </div>
+  <div class="grid-container" id="productGrid"></div>
   <div class="pagination">
     <button onclick="alert('← 上一頁功能尚未開放')">← 上一頁</button>
     <button onclick="alert('→ 下一頁功能尚未建置')">下一頁 →</button>
   </div>
-  <div class="product-page"></div>
   <script>
     const sampleProducts = [
       { id: 1, name: "可愛娃娃1號", price: 299, image: "https://via.placeholder.com/200x120?text=1" },
@@ -193,3 +163,4 @@
   </script>
 </body>
 </html>
+
