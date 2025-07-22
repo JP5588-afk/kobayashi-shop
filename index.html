@@ -42,6 +42,7 @@
       padding: 20px;
       box-shadow: 2px 0 8px rgba(0,0,0,0.2);
       transition: left 0.3s ease;
+      z-index: 1000;
     }
 
     .sidebar.active {
@@ -62,6 +63,17 @@
       padding: 10px 0;
       cursor: pointer;
       color: #444;
+    }
+
+    .sidebar .back-button {
+      margin-top: 20px;
+      background: #ff69b4;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: block;
     }
 
     .cart-icon {
@@ -159,6 +171,7 @@
       <li onclick="alert('分類功能尚未實作')">可愛娃娃</li>
       <li onclick="alert('分類功能尚未實作')">生活雜貨</li>
     </ul>
+    <button class="back-button" onclick="toggleSidebar()">← 關閉選單</button>
   </div>
 
   <header>
