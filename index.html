@@ -161,6 +161,17 @@
       background: #ff1493;
     }
 
+    #detail-view {
+      display: none;
+      max-width: 600px;
+      margin: 20px auto;
+      background: #fff8fb;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      text-align: center;
+    }
+
     @media (max-width: 600px) {
       .grid {
         grid-template-columns: repeat(2, 1fr);
@@ -186,54 +197,89 @@
   <header>
     <div class="menu-icon" onclick="toggleSidebar()">☰</div>
     <h1>小林日貨鋪</h1>
-    <div class="cart-icon" onclick="alert('購物車功能尚未開啟')">
+    <div class="cart-icon" onclick="showCart()">
       🛒<span id="cart-count">0</span>
     </div>
   </header>
 
   <main>
-    <div class="grid">
-      <div class="product">
-        <img src="https://via.placeholder.com/300x200?text=商品A" />
-        <h2>櫻花糖果A</h2>
-        <p>$180</p>
-      </div>
-      <div class="product">
-        <img src="https://via.placeholder.com/300x200?text=商品B" />
-        <h2>小熊吊飾B</h2>
-        <p>$220</p>
-      </div>
-      <div class="product">
-        <img src="https://via.placeholder.com/300x200?text=商品C" />
-        <h2>抹茶蛋糕C</h2>
-        <p>$130</p>
-      </div>
-      <div class="product">
-        <img src="https://via.placeholder.com/300x200?text=商品D" />
-        <h2>文具組D</h2>
-        <p>$95</p>
-      </div>
-      <div class="product">
-        <img src="https://via.placeholder.com/300x200?text=商品E" />
-        <h2>扭蛋E</h2>
-        <p>$230</p>
-      </div>
-      <div class="product">
-        <img src="https://via.placeholder.com/300x200?text=商品F" />
-        <h2>小兔娃娃F</h2>
-        <p>$190</p>
-      </div>
-    </div>
-
+    <div id="product-grid" class="grid"></div>
     <div class="pagination">
       <button onclick="location.href='page2.html'">下一頁</button>
     </div>
+    <div id="detail-view"></div>
   </main>
 
   <script>
+    const products = [
+      { id: 1, name: "櫻花糖果A", price: 180, img: "https://via.placeholder.com/300x200?text=商品A", desc: "春季限定櫻花風味糖果，甜而不膩。" },
+      { id: 2, name: "小熊吊飾B", price: 220, img: "https://via.placeholder.com/300x200?text=商品B", desc: "可愛療癒系小熊吊飾，隨身必備。" },
+      { id: 3, name: "抹茶蛋糕C", price: 130, img: "https://via.placeholder.com/300x200?text=商品C", desc: "道地抹茶風味小蛋糕，口感濃郁。" },
+      { id: 4, name: "文具組D", price: 95, img: "https://via.placeholder.com/300x200?text=商品D", desc: "文青必備日式文具組，實用又可愛。" },
+      { id: 5, name: "扭蛋E", price: 230, img: "https://via.placeholder.com/300x200?text=商品E", desc: "隨機款式驚喜扭蛋，收藏控必收。" },
+      { id: 6, name: "小兔娃娃F", price: 190, img: "https://via.placeholder.com/300x200?text=商品F", desc: "萌萌兔兔絨毛娃娃，柔軟親膚。" }
+    ];
+
+    let cart = [];
+
     function toggleSidebar() {
       document.getElementById("sidebar").classList.toggle("active");
     }
+
+    function renderProducts() {
+      const grid = document.getElementById("product-grid");
+      grid.innerHTML = products.map(p => `
+        <div class="product" onclick="showDetail(${p.id})">
+          <img src="${p.img}" />
+          <h2>${p.name}</h2>
+          <p>$${p.price}</p>
+        </div>
+      `).join('');
+    }
+
+    function showDetail(id) {
+      const p = products.find(x => x.id === id);
+      document.getElementById("product-grid").style.display = 'none';
+      document.querySelector(".pagination").style.display = 'none';
+      const detail = document.getElementById("detail-view");
+      detail.style.display = 'block';
+      let qtyOptions = '<select id="qty">' + Array.from({ length: 10 }, (_, i) => `<option value="${i+1}">${i+1}</option>`).join('') + '</select>';
+      detail.innerHTML = `
+        <button onclick="goBack()">← 返回</button>
+        <h2>${p.name}</h2>
+        <img src="${p.img}" style="width:100%;max-width:400px;border-radius:12px;"/>
+        <p>${p.desc}</p>
+        <p><strong>$${p.price}</strong></p>
+        數量：${qtyOptions}<br><br>
+        <button onclick="addToCart(${p.id})">加入購物車</button>
+      `;
+    }
+
+    function goBack() {
+      document.getElementById("detail-view").style.display = 'none';
+      document.getElementById("product-grid").style.display = 'grid';
+      document.querySelector(".pagination").style.display = 'block';
+    }
+
+    function addToCart(id) {
+      const qty = parseInt(document.getElementById("qty").value);
+      const existing = cart.find(x => x.id === id);
+      if (existing) existing.qty += qty;
+      else cart.push({ id, qty });
+      document.getElementById("cart-count").innerText = cart.reduce((sum, x) => sum + x.qty, 0);
+      alert("已加入購物車！");
+    }
+
+    function showCart() {
+      let msg = cart.map(item => {
+        const p = products.find(x => x.id === item.id);
+        return `${p.name} × ${item.qty} = $${p.price * item.qty}`;
+      }).join('\n');
+      if (!msg) msg = '購物車是空的';
+      alert(msg);
+    }
+
+    renderProducts();
   </script>
 </body>
 </html>
