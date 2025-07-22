@@ -35,6 +35,7 @@
       cursor: pointer;
       position: absolute;
       left: 20px;
+      z-index: 1100;
     }
 
     .sidebar {
@@ -164,6 +165,9 @@
       .grid {
         grid-template-columns: repeat(2, 1fr);
       }
+      .sidebar {
+        width: 200px;
+      }
     }
   </style>
 </head>
@@ -176,7 +180,7 @@
       <li onclick="alert('分類功能尚未實作')">可愛娃娃</li>
       <li onclick="alert('分類功能尚未實作')">生活雜貨</li>
     </ul>
-    <button class="back-button" onclick="toggleSidebar()">← 關閉選單</button>
+    <button class="back-button" onclick="toggleSidebar()">← 返回</button>
   </div>
 
   <header>
