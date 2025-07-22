@@ -55,7 +55,7 @@
       grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
       gap: 16px;
       padding: 20px;
-      max-width: 900px;
+      max-width: 1000px;
       margin: 0 auto;
     }
     .card {
@@ -114,32 +114,110 @@
       border-radius: 8px;
       cursor: pointer;
     }
+    #detailModal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+    #detailContent {
+      background: white;
+      border-radius: 20px;
+      padding: 20px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+    #detailContent img {
+      width: 100%;
+      border-radius: 10px;
+    }
+    #cartItems {
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
   <header>
     Kobayashi Shop - 日本零食與娃娃專賣
     <div id="cartIcon" title="購物車" onclick="toggleCartDetails()">0</div>
-    <div id="cartDetails"></div>
+    <div id="cartDetails"><div id="cartItems">尚無商品</div></div>
   </header>
   <div class="grid-container" id="productGrid"></div>
   <div class="pagination">
     <button onclick="alert('← 上一頁功能尚未開放')">← 上一頁</button>
     <button onclick="alert('→ 下一頁功能尚未建置')">下一頁 →</button>
   </div>
+  <div id="detailModal">
+    <div id="detailContent"></div>
+  </div>
   <script>
     const sampleProducts = [
-      { id: 1, name: "可愛娃娃1號", price: 299, image: "https://via.placeholder.com/200x120?text=1" },
-      { id: 2, name: "東京限定餅乾", price: 180, image: "https://via.placeholder.com/200x120?text=2" },
-      { id: 3, name: "哈密瓜果凍", price: 120, image: "https://via.placeholder.com/200x120?text=3" },
-      { id: 4, name: "經典巧克力", price: 250, image: "https://via.placeholder.com/200x120?text=4" },
-      { id: 5, name: "北海道奶糖", price: 150, image: "https://via.placeholder.com/200x120?text=5" },
-      { id: 6, name: "抹茶餅乾", price: 180, image: "https://via.placeholder.com/200x120?text=6" },
-      { id: 7, name: "蘋果果乾", price: 160, image: "https://via.placeholder.com/200x120?text=7" },
-      { id: 8, name: "神秘盒子", price: 500, image: "https://via.placeholder.com/200x120?text=8" }
+      { id: 1, name: "可愛娃娃1號", price: 299, image: "https://via.placeholder.com/200x120?text=1", desc: "這是可愛的娃娃1號，手感舒適，適合收藏。" },
+      { id: 2, name: "東京限定餅乾", price: 180, image: "https://via.placeholder.com/200x120?text=2", desc: "東京限定販售的美味餅乾，香脆可口。" },
+      { id: 3, name: "哈密瓜果凍", price: 120, image: "https://via.placeholder.com/200x120?text=3", desc: "清爽哈密瓜風味果凍，適合夏天享用。" },
+      { id: 4, name: "經典巧克力", price: 250, image: "https://via.placeholder.com/200x120?text=4", desc: "濃郁香甜的經典巧克力，回味無窮。" },
+      { id: 5, name: "北海道奶糖", price: 150, image: "https://via.placeholder.com/200x120?text=5", desc: "濃濃奶香的北海道經典糖果，老少皆宜。" },
+      { id: 6, name: "抹茶餅乾", price: 180, image: "https://via.placeholder.com/200x120?text=6", desc: "宇治抹茶餅乾，濃郁茶香，微甜不膩。" },
+      { id: 7, name: "蘋果果乾", price: 160, image: "https://via.placeholder.com/200x120?text=7", desc: "健康無添加的蘋果果乾，適合小朋友。" },
+      { id: 8, name: "神秘盒子", price: 500, image: "https://via.placeholder.com/200x120?text=8", desc: "內容隨機！可能是零食也可能是娃娃。" }
     ];
 
     const gridContainer = document.getElementById('productGrid');
+    const cart = {};
+
+    function updateCartIcon() {
+      const cartCount = Object.values(cart).reduce((sum, item) => sum + item.quantity, 0);
+      document.getElementById("cartIcon").innerText = cartCount;
+      const cartItems = Object.values(cart).map(item => `
+        <div>
+          ${item.name} × ${item.quantity} = $${item.price * item.quantity}
+        </div>
+      `).join('') || '尚無商品';
+      document.getElementById("cartItems").innerHTML = cartItems;
+    }
+
+    function showProductDetail(product) {
+      const modal = document.getElementById("detailModal");
+      const detail = document.getElementById("detailContent");
+      detail.innerHTML = `
+        <img src="${product.image}" alt="${product.name}" />
+        <h3>${product.name}</h3>
+        <p>${product.desc}</p>
+        <p>單價：$${product.price}</p>
+        <label>數量：<input type="number" id="qty" value="1" min="1" style="width:50px;"></label>
+        <div style="margin-top:10px;">
+          <button class="button" onclick="addToCart(${product.id}, parseInt(document.getElementById('qty').value))">加入購物車</button>
+          <button class="button" onclick="alert('跳轉結帳流程尚未完成')">立即下單</button>
+        </div>
+        <div style="margin-top:10px;"><button onclick="closeDetail()">返回</button></div>
+      `;
+      modal.style.display = "flex";
+    }
+
+    function closeDetail() {
+      document.getElementById("detailModal").style.display = "none";
+    }
+
+    function addToCart(id, qty = 1) {
+      const product = sampleProducts.find(p => p.id === id);
+      if (!cart[id]) {
+        cart[id] = { ...product, quantity: 0 };
+      }
+      cart[id].quantity += qty;
+      updateCartIcon();
+      closeDetail();
+    }
+
+    function toggleCartDetails() {
+      const cartBox = document.getElementById("cartDetails");
+      cartBox.style.display = cartBox.style.display === "block" ? "none" : "block";
+    }
+
     sampleProducts.forEach(product => {
       const card = document.createElement('div');
       card.className = 'card';
@@ -147,20 +225,12 @@
         <img src="${product.image}" alt="${product.name}">
         <div class="title">${product.name}</div>
         <div class="price">$${product.price}</div>
-        <button class="button" onclick="addToCart(${product.id})">加入購物車</button>
       `;
+      card.onclick = () => showProductDetail(product);
       gridContainer.appendChild(card);
     });
 
-    function toggleCartDetails() {
-      const cart = document.getElementById("cartDetails");
-      cart.style.display = cart.style.display === "block" ? "none" : "block";
-    }
-
-    function addToCart(id) {
-      alert("已加入購物車，商品ID: " + id);
-    }
+    updateCartIcon();
   </script>
 </body>
 </html>
-
