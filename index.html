@@ -7,7 +7,7 @@
   <style>
     body {
       font-family: "Segoe UI", "Helvetica Neue", sans-serif;
-      background-color: #f4f4f4;
+      background-color: #fefefe;
       margin: 0;
       padding: 40px 20px;
     }
@@ -51,7 +51,7 @@
     }
 
     .product {
-      background: #fff;
+      background: linear-gradient(145deg, #ffffff, #f0f0f0);
       border-radius: 16px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.06);
       overflow: hidden;
@@ -63,6 +63,7 @@
 
     .product:hover {
       transform: translateY(-4px);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
     }
 
     .product img {
@@ -123,17 +124,18 @@
     }
 
     button {
-      background: #222;
+      background: #ff7f50;
       color: #fff;
       padding: 8px 16px;
       border: none;
       border-radius: 8px;
       cursor: pointer;
       margin-top: 10px;
+      transition: background 0.3s;
     }
 
     button:hover {
-      background: #444;
+      background: #ff5733;
     }
 
     @media (max-width: 600px) {
@@ -167,6 +169,10 @@
     const products = [
       { id: 1, name: "日本零食A", price: 100, img: "https://via.placeholder.com/300x200?text=商品A", desc: "超人氣日本零食，酥脆美味。" },
       { id: 2, name: "日本娃娃B", price: 250, img: "https://via.placeholder.com/300x200?text=商品B", desc: "可愛日本娃娃，收藏必備。" },
+      { id: 3, name: "抹茶餅乾C", price: 150, img: "https://via.placeholder.com/300x200?text=商品C", desc: "香濃抹茶味餅乾，香氣十足。" },
+      { id: 4, name: "布丁D", price: 90, img: "https://via.placeholder.com/300x200?text=商品D", desc: "滑嫩布丁，入口即化。" },
+      { id: 5, name: "扭蛋E", price: 200, img: "https://via.placeholder.com/300x200?text=商品E", desc: "趣味扭蛋，隨機驚喜。" },
+      { id: 6, name: "卡通筆記本F", price: 120, img: "https://via.placeholder.com/300x200?text=商品F", desc: "日本卡通風格，學生最愛。" }
     ];
     let cart = [];
 
@@ -240,18 +246,37 @@
       document.getElementById('checkout-page').innerHTML = `
         <h2>填寫個人資料</h2>
         <form onsubmit="submitOrder(event)">
-          姓名：<input type="text" required/><br><br>
-          電話：<input type="tel" required/><br><br>
-          地址：<input type="text" required/><br><br>
+          姓名：<input type="text" id="name" required/><br><br>
+          電話：<input type="tel" id="phone" required/><br><br>
+          地址：<input type="text" id="address" required/><br><br>
           <button type="submit">前往付款</button>
         </form>
       `;
     }
 
-    function submitOrder(e) {
+    async function submitOrder(e) {
       e.preventDefault();
-      alert('感謝訂購！將跳轉至付款頁');
-      window.location.href = "https://你的付款頁面連結";
+      const name = document.getElementById('name').value;
+      const phone = document.getElementById('phone').value;
+      const address = document.getElementById('address').value;
+      const order = { name, phone, address, cart };
+
+      try {
+        const response = await fetch('https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec', {
+          method: 'POST',
+          body: JSON.stringify(order),
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (response.ok) {
+          alert('訂單送出成功！');
+          window.location.href = "https://你的付款頁面連結";
+        } else {
+          alert('送出失敗，請稍後再試');
+        }
+      } catch (err) {
+        alert('發生錯誤：' + err.message);
+      }
     }
 
     renderProducts();
