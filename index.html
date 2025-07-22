@@ -113,9 +113,24 @@
       border-radius: 8px;
       cursor: pointer;
     }
+    .order-form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 20px;
+    }
+    .order-form input, .order-form select {
+      margin: 6px 0;
+      padding: 8px;
+      width: 80%;
+      max-width: 320px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
   </style>
   <script>
     let cartCount = 0;
+    let currentProduct = {};
     function addToCart(title) {
       cartCount++;
       document.getElementById('cartIcon').innerText = cartCount;
@@ -123,6 +138,7 @@
     }
 
     function goToProduct(title, price, img) {
+      currentProduct = { title, price };
       document.querySelector(".grid-container").style.display = "none";
       document.querySelector(".pagination").style.display = "none";
       const productPage = document.querySelector(".product-page");
@@ -132,10 +148,40 @@
         <img src="\${img}" style="max-width:300px; border-radius:16px" alt="\${title}">
         <div class="price">\${price}</div>
         <div style="margin-top: 20px; font-size: 16px; color: #555;">這裡可以放商品描述～你可以手動更改這段內容來介紹這個商品！</div>
-        <button class="button" style="margin-top: 20px" onclick="addToCart('\${title}')">加入購物車</button>
-        <br><br>
-        <button class="back-button" onclick="goBack()">← 回上一頁</button>
+        <div class="order-form">
+          <input type="text" id="name" placeholder="姓名" required>
+          <input type="text" id="phone" placeholder="電話" required>
+          <input type="text" id="address" placeholder="地址" required>
+          <select id="payment">
+            <option value="街口支付">街口支付</option>
+            <option value="全支付">全支付</option>
+            <option value="銀行轉帳">銀行轉帳</option>
+          </select>
+          <button class="button" onclick="submitOrder()">確認下單</button>
+        </div>
+        <br><button class="back-button" onclick="goBack()">← 回上一頁</button>
       `;
+    }
+
+    function submitOrder() {
+      const name = document.getElementById('name').value;
+      const phone = document.getElementById('phone').value;
+      const address = document.getElementById('address').value;
+      const payment = document.getElementById('payment').value;
+
+      fetch("https://script.google.com/macros/s/AKfycbw87fFKSJUVnnul8ygZBJ0s-98szD25zQ2sI3vs1cCEScJtoWGYKiMJPYU-ki23IIZz/exec", {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          name, phone, address, payment
+        })
+      });
+
+      alert("✅ 訂單已送出！感謝您的購買 ❤️");
+      goBack();
     }
 
     function goBack() {
@@ -152,7 +198,6 @@
   </header>
 
   <div class="grid-container">
-    <!-- 商品卡片範例，可複製新增更多 -->
     <div class="card" onclick="goToProduct('可愛娃娃1號', '$299', 'https://placehold.co/300x200?text=商品1')">
       <img src="https://placehold.co/300x200?text=商品1" alt="商品1">
       <div class="title">可愛娃娃1號</div>
