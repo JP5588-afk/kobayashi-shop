@@ -52,8 +52,8 @@
     }
     .grid-container {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 20px;
       padding: 24px;
       max-width: 960px;
       margin: 0 auto;
@@ -142,106 +142,6 @@
       border: 1px solid #ccc;
     }
   </style>
-  <script>
-    let cart = [];
-    let currentProduct = {};
-
-    function addToCart(title, price, quantity = 1) {
-      const existing = cart.find(item => item.title === title);
-      if (existing) {
-        existing.quantity += quantity;
-      } else {
-        cart.push({ title, price, quantity });
-      }
-      updateCartIcon();
-      alert(`${title} 已加入購物車！`);
-    }
-
-    function updateCartIcon() {
-      const total = cart.reduce((sum, item) => sum + item.quantity, 0);
-      document.getElementById('cartIcon').innerText = total;
-    }
-
-    function toggleCartDetails() {
-      const cartDetails = document.getElementById('cartDetails');
-      if (cartDetails.style.display === 'block') {
-        cartDetails.style.display = 'none';
-      } else {
-        cartDetails.innerHTML = '<strong>購物車內容：</strong><ul>' +
-          cart.map(item => `<li>${item.title} x ${item.quantity} - \$${item.price * item.quantity}</li>`).join('') +
-          '</ul>';
-        cartDetails.style.display = 'block';
-      }
-    }
-
-    function goToProduct(title, price, img) {
-      currentProduct = { title, price, img };
-      document.querySelector(".grid-container").style.display = "none";
-      document.querySelector(".pagination").style.display = "none";
-      const productPage = document.querySelector(".product-page");
-      productPage.style.display = "block";
-      productPage.innerHTML = `
-        <h1>${title}</h1>
-        <img src="${img}" style="max-width:300px; border-radius:16px" alt="${title}">
-        <div class="price">$<span id="unitPrice">${price}</span></div>
-        <div style="margin-top: 10px;">
-          數量：<input type="number" id="quantity" value="1" min="1" style="width: 60px;">
-        </div>
-        <div style="margin-top: 20px; font-size: 16px; color: #555;">這裡可以放商品描述～你可以手動更改這段內容來介紹這個商品！</div>
-        <div style="margin-top: 10px">
-          <button class="button" onclick="addProductToCart()">加入購物車</button>
-          <button class="button" onclick="showOrderForm()">立即下單</button>
-        </div>
-        <br><button class="back-button" onclick="goBack()">← 回上一頁</button>
-        <div class="order-form">
-          <input type="text" id="name" placeholder="姓名" required>
-          <input type="text" id="phone" placeholder="電話" required>
-          <input type="text" id="address" placeholder="地址" required>
-          <select id="payment">
-            <option value="街口支付">街口支付</option>
-            <option value="全支付">全支付</option>
-            <option value="銀行轉帳">銀行轉帳</option>
-          </select>
-          <button class="button" onclick="submitOrder()">確認下單</button>
-        </div>
-      `;
-    }
-
-    function showOrderForm() {
-      document.querySelector(".order-form").style.display = "flex";
-      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-    }
-
-    function addProductToCart() {
-      const quantity = parseInt(document.getElementById("quantity").value);
-      addToCart(currentProduct.title, parseFloat(currentProduct.price), quantity);
-    }
-
-    function submitOrder() {
-      const name = document.getElementById('name').value;
-      const phone = document.getElementById('phone').value;
-      const address = document.getElementById('address').value;
-      const payment = document.getElementById('payment').value;
-
-      fetch("https://script.google.com/macros/s/AKfycbw87fFKSJUVnnul8ygZBJ0s-98szD25zQ2sI3vs1cCEScJtoWGYKiMJPYU-ki23IIZz/exec", {
-        method: "POST",
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ name, phone, address, payment })
-      });
-
-      alert("✅ 訂單已送出！感謝您的購買 ❤️");
-      goBack();
-    }
-
-    function goBack() {
-      document.querySelector(".grid-container").style.display = "grid";
-      document.querySelector(".pagination").style.display = "block";
-      document.querySelector(".product-page").style.display = "none";
-    }
-  </script>
 </head>
 <body>
   <header>
@@ -249,27 +149,47 @@
     <div id="cartIcon" title="購物車" onclick="toggleCartDetails()">0</div>
     <div id="cartDetails"></div>
   </header>
-
-  <div class="grid-container">
-    <div class="card" onclick="goToProduct('可愛娃娃1號', '299', 'https://placehold.co/300x200?text=商品1')">
-      <img src="https://placehold.co/300x200?text=商品1" alt="商品1">
-      <div class="title">可愛娃娃1號</div>
-      <div class="price">$299</div>
-      <button class="button" onclick="event.stopPropagation(); addToCart('可愛娃娃1號', 299)">加入購物車</button>
-    </div>
-    <div class="card" onclick="goToProduct('東京限定餅乾', '180', 'https://placehold.co/300x200?text=商品2')">
-      <img src="https://placehold.co/300x200?text=商品2" alt="商品2">
-      <div class="title">東京限定餅乾</div>
-      <div class="price">$180</div>
-      <button class="button" onclick="event.stopPropagation(); addToCart('東京限定餅乾', 180)">加入購物車</button>
-    </div>
+  <div class="grid-container" id="productGrid">
+    <!-- 商品卡片動態產生 -->
   </div>
-
   <div class="pagination">
     <button onclick="alert('← 上一頁功能尚未開放')">← 上一頁</button>
     <button onclick="alert('→ 下一頁功能尚未建置')">下一頁 →</button>
   </div>
-
   <div class="product-page"></div>
+  <script>
+    const sampleProducts = [
+      { id: 1, name: "可愛娃娃1號", price: 299, image: "https://via.placeholder.com/200x120?text=1" },
+      { id: 2, name: "東京限定餅乾", price: 180, image: "https://via.placeholder.com/200x120?text=2" },
+      { id: 3, name: "哈密瓜果凍", price: 120, image: "https://via.placeholder.com/200x120?text=3" },
+      { id: 4, name: "經典巧克力", price: 250, image: "https://via.placeholder.com/200x120?text=4" },
+      { id: 5, name: "北海道奶糖", price: 150, image: "https://via.placeholder.com/200x120?text=5" },
+      { id: 6, name: "抹茶餅乾", price: 180, image: "https://via.placeholder.com/200x120?text=6" },
+      { id: 7, name: "蘋果果乾", price: 160, image: "https://via.placeholder.com/200x120?text=7" },
+      { id: 8, name: "神秘盒子", price: 500, image: "https://via.placeholder.com/200x120?text=8" }
+    ];
+
+    const gridContainer = document.getElementById('productGrid');
+    sampleProducts.forEach(product => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <img src="${product.image}" alt="${product.name}">
+        <div class="title">${product.name}</div>
+        <div class="price">$${product.price}</div>
+        <button class="button" onclick="addToCart(${product.id})">加入購物車</button>
+      `;
+      gridContainer.appendChild(card);
+    });
+
+    function toggleCartDetails() {
+      const cart = document.getElementById("cartDetails");
+      cart.style.display = cart.style.display === "block" ? "none" : "block";
+    }
+
+    function addToCart(id) {
+      alert("已加入購物車，商品ID: " + id);
+    }
+  </script>
 </body>
 </html>
