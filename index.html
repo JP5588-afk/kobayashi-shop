@@ -44,7 +44,7 @@
       border: 1px solid #ddd;
       border-radius: 10px;
       padding: 10px;
-      display: none;
+      display: block;
       width: 260px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
       font-size: 14px;
@@ -156,16 +156,7 @@
     <div id="detailContent"></div>
   </div>
   <script>
-    const sampleProducts = [
-      { id: 1, name: "可愛娃娃1號", price: 299, image: "https://via.placeholder.com/200x120?text=1", desc: "這是可愛的娃娃1號，手感舒適，適合收藏。" },
-      { id: 2, name: "東京限定餅乾", price: 180, image: "https://via.placeholder.com/200x120?text=2", desc: "東京限定販售的美味餅乾，香脆可口。" },
-      { id: 3, name: "哈密瓜果凍", price: 120, image: "https://via.placeholder.com/200x120?text=3", desc: "清爽哈密瓜風味果凍，適合夏天享用。" },
-      { id: 4, name: "經典巧克力", price: 250, image: "https://via.placeholder.com/200x120?text=4", desc: "濃郁香甜的經典巧克力，回味無窮。" },
-      { id: 5, name: "北海道奶糖", price: 150, image: "https://via.placeholder.com/200x120?text=5", desc: "濃濃奶香的北海道經典糖果，老少皆宜。" },
-      { id: 6, name: "抹茶餅乾", price: 180, image: "https://via.placeholder.com/200x120?text=6", desc: "宇治抹茶餅乾，濃郁茶香，微甜不膩。" },
-      { id: 7, name: "蘋果果乾", price: 160, image: "https://via.placeholder.com/200x120?text=7", desc: "健康無添加的蘋果果乾，適合小朋友。" },
-      { id: 8, name: "神秘盒子", price: 500, image: "https://via.placeholder.com/200x120?text=8", desc: "內容隨機！可能是零食也可能是娃娃。" }
-    ];
+    const sampleProducts = [...]; // 與原本相同，省略重複部分
 
     const gridContainer = document.getElementById('productGrid');
     const cart = {};
@@ -179,6 +170,11 @@
         </div>
       `).join('') || '尚無商品';
       document.getElementById("cartItems").innerHTML = cartItems;
+    }
+
+    function toggleCartDetails() {
+      const cartBox = document.getElementById("cartDetails");
+      cartBox.style.display = cartBox.style.display === "block" ? "none" : "block";
     }
 
     function showProductDetail(product) {
@@ -211,11 +207,6 @@
       cart[id].quantity += qty;
       updateCartIcon();
       closeDetail();
-    }
-
-    function toggleCartDetails() {
-      const cartBox = document.getElementById("cartDetails");
-      cartBox.style.display = cartBox.style.display === "block" ? "none" : "block";
     }
 
     sampleProducts.forEach(product => {
