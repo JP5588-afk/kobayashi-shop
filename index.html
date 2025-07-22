@@ -9,21 +9,59 @@
       font-family: "Segoe UI", "Helvetica Neue", sans-serif;
       background-color: #fff0f5;
       margin: 0;
-      padding: 40px 20px;
+      padding: 0;
     }
 
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding: 20px;
       max-width: 900px;
-      margin: 0 auto 20px;
+      margin: 0 auto;
     }
 
     h1 {
       color: #ff69b4;
       font-weight: 700;
       font-size: 26px;
+    }
+
+    .menu-icon {
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -250px;
+      width: 250px;
+      height: 100%;
+      background-color: #ffe4ec;
+      padding: 20px;
+      box-shadow: 2px 0 8px rgba(0,0,0,0.2);
+      transition: left 0.3s ease;
+    }
+
+    .sidebar.active {
+      left: 0;
+    }
+
+    .sidebar h3 {
+      margin-top: 0;
+      color: #cc3366;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar ul li {
+      padding: 10px 0;
+      cursor: pointer;
+      color: #444;
     }
 
     .cart-icon {
@@ -48,7 +86,8 @@
       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
       gap: 20px;
       max-width: 900px;
-      margin: 0 auto;
+      margin: 20px auto;
+      padding: 0 20px;
     }
 
     .product {
@@ -87,61 +126,21 @@
 
     .pagination {
       text-align: center;
-      margin-top: 40px;
+      margin: 40px 0;
     }
 
-    .pagination a {
-      display: none;
-    }
-
-    #cart-page, #product-detail, #checkout-page {
-      display: none;
-      max-width: 800px;
-      margin: 20px auto;
-      background: #fffafc;
-      padding: 20px;
-      border-radius: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-    }
-
-    .cart-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #eee;
-      padding: 10px 0;
-    }
-
-    .cart-item img {
-      width: 60px;
-      border-radius: 8px;
-    }
-
-    .cart-controls input {
-      width: 40px;
-    }
-
-    button {
+    .pagination button {
       background: #ff69b4;
-      color: #fff;
-      padding: 8px 16px;
+      color: white;
       border: none;
-      border-radius: 12px;
+      padding: 8px 12px;
+      margin: 0 5px;
+      border-radius: 8px;
       cursor: pointer;
-      margin-top: 10px;
-      transition: background 0.3s;
     }
 
-    button:hover {
+    .pagination button:hover {
       background: #ff1493;
-    }
-
-    select, input[type="text"], input[type="tel"] {
-      padding: 8px;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      width: 100%;
-      margin-bottom: 10px;
     }
 
     @media (max-width: 600px) {
@@ -152,12 +151,24 @@
   </style>
 </head>
 <body>
+  <div class="sidebar" id="sidebar">
+    <h3>分類</h3>
+    <ul>
+      <li onclick="alert('分類功能尚未實作')">全部商品</li>
+      <li onclick="alert('分類功能尚未實作')">日本零食</li>
+      <li onclick="alert('分類功能尚未實作')">可愛娃娃</li>
+      <li onclick="alert('分類功能尚未實作')">生活雜貨</li>
+    </ul>
+  </div>
+
   <header>
+    <div class="menu-icon" onclick="toggleSidebar()">☰</div>
     <h1>小林日貨鋪</h1>
     <div class="cart-icon" onclick="alert('購物車功能尚未開啟')">
       🛒<span id="cart-count">0</span>
     </div>
   </header>
+
   <main>
     <div class="grid">
       <div class="product">
@@ -191,6 +202,17 @@
         <p>$120</p>
       </div>
     </div>
+
+    <div class="pagination">
+      <button disabled>上一頁</button>
+      <button>下一頁</button>
+    </div>
   </main>
+
+  <script>
+    function toggleSidebar() {
+      document.getElementById("sidebar").classList.toggle("active");
+    }
+  </script>
 </body>
 </html>
