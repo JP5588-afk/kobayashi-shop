@@ -7,7 +7,7 @@
   <style>
     body {
       font-family: "Segoe UI", "Helvetica Neue", sans-serif;
-      background-color: #fefefe;
+      background-color: #fff8fc;
       margin: 0;
       padding: 40px 20px;
     }
@@ -21,14 +21,15 @@
     }
 
     h1 {
-      color: #222;
-      font-weight: 600;
-      font-size: 24px;
+      color: #ff69b4;
+      font-weight: 700;
+      font-size: 26px;
     }
 
     .cart-icon {
       position: relative;
       cursor: pointer;
+      font-size: 20px;
     }
 
     .cart-icon span {
@@ -51,8 +52,8 @@
     }
 
     .product {
-      background: linear-gradient(145deg, #ffffff, #f0f0f0);
-      border-radius: 16px;
+      background: #fff0f5;
+      border-radius: 20px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.06);
       overflow: hidden;
       text-align: center;
@@ -62,25 +63,25 @@
     }
 
     .product:hover {
-      transform: translateY(-4px);
+      transform: scale(1.02);
       box-shadow: 0 6px 18px rgba(0,0,0,0.08);
     }
 
     .product img {
       max-width: 100%;
-      border-radius: 12px;
+      border-radius: 16px;
       margin-bottom: 12px;
     }
 
     .product h2 {
       font-size: 18px;
       margin: 8px 0 4px;
-      color: #333;
+      color: #cc3366;
     }
 
     .product p {
       font-size: 16px;
-      color: #666;
+      color: #555;
       margin-bottom: 12px;
     }
 
@@ -90,19 +91,16 @@
     }
 
     .pagination a {
-      margin: 0 10px;
-      text-decoration: none;
-      color: #007bff;
-      font-weight: bold;
+      display: none;
     }
 
     #cart-page, #product-detail, #checkout-page {
       display: none;
       max-width: 800px;
       margin: 20px auto;
-      background: #fff;
+      background: #fffafc;
       padding: 20px;
-      border-radius: 16px;
+      border-radius: 20px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.06);
     }
 
@@ -124,18 +122,24 @@
     }
 
     button {
-      background: #ff7f50;
+      background: #ff69b4;
       color: #fff;
       padding: 8px 16px;
       border: none;
-      border-radius: 8px;
+      border-radius: 12px;
       cursor: pointer;
       margin-top: 10px;
       transition: background 0.3s;
     }
 
     button:hover {
-      background: #ff5733;
+      background: #ff1493;
+    }
+
+    select {
+      padding: 6px;
+      border-radius: 8px;
+      margin-top: 10px;
     }
 
     @media (max-width: 600px) {
@@ -156,10 +160,7 @@
 
   <div id="product-list" class="grid"></div>
 
-  <div class="pagination">
-    <a href="#">上一頁</a>
-    <a href="#">下一頁</a>
-  </div>
+  <div class="pagination"></div>
 
   <div id="product-detail"></div>
   <div id="cart-page"></div>
@@ -190,20 +191,29 @@
       const p = products.find(x => x.id === id);
       document.getElementById('product-list').style.display = 'none';
       document.getElementById('product-detail').style.display = 'block';
+      let qtyOptions = '<select id="select-qty">' + Array.from({ length: 10 }, (_, i) => `<option value="${i+1}">${i+1}</option>`).join('') + '</select>';
       document.getElementById('product-detail').innerHTML = `
+        <button onclick="goBack()">← 返回</button>
         <h2>${p.name}</h2>
         <img src="${p.img}" style="width:100%;max-width:400px;border-radius:12px;"/>
         <p>${p.desc}</p>
         <p><strong>$${p.price}</strong></p>
+        數量：${qtyOptions}<br>
         <button onclick="addToCart(${p.id})">加入購物車</button>
         <button onclick="goToCart()">立即下單</button>
       `;
     }
 
+    function goBack() {
+      document.getElementById('product-detail').style.display = 'none';
+      document.getElementById('product-list').style.display = 'grid';
+    }
+
     function addToCart(id) {
+      const qty = parseInt(document.getElementById('select-qty')?.value || 1);
       const found = cart.find(x => x.id === id);
-      if (found) found.qty++;
-      else cart.push({ id, qty: 1 });
+      if (found) found.qty += qty;
+      else cart.push({ id, qty });
       document.getElementById('cart-count').innerText = cart.reduce((s,x) => s + x.qty, 0);
     }
 
