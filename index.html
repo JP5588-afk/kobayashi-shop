@@ -36,6 +36,19 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
       cursor: pointer;
     }
+    #cartDetails {
+      position: absolute;
+      top: 70px;
+      right: 20px;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 10px;
+      display: none;
+      width: 220px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      font-size: 14px;
+    }
     .grid-container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -114,7 +127,7 @@
       cursor: pointer;
     }
     .order-form {
-      display: flex;
+      display: none;
       flex-direction: column;
       align-items: center;
       margin-top: 20px;
@@ -129,16 +142,39 @@
     }
   </style>
   <script>
-    let cartCount = 0;
+    let cart = [];
     let currentProduct = {};
-    function addToCart(title) {
-      cartCount++;
-      document.getElementById('cartIcon').innerText = cartCount;
+
+    function addToCart(title, price) {
+      const existing = cart.find(item => item.title === title);
+      if (existing) {
+        existing.quantity += 1;
+      } else {
+        cart.push({ title, price, quantity: 1 });
+      }
+      updateCartIcon();
       alert(`${title} 已加入購物車！`);
     }
 
+    function updateCartIcon() {
+      const total = cart.reduce((sum, item) => sum + item.quantity, 0);
+      document.getElementById('cartIcon').innerText = total;
+    }
+
+    function toggleCartDetails() {
+      const cartDetails = document.getElementById('cartDetails');
+      if (cartDetails.style.display === 'block') {
+        cartDetails.style.display = 'none';
+      } else {
+        cartDetails.innerHTML = '<strong>購物車內容：</strong><ul>' +
+          cart.map(item => `<li>\${item.title} x \${item.quantity} - \$\${item.price * item.quantity}</li>`).join('') +
+          '</ul>';
+        cartDetails.style.display = 'block';
+      }
+    }
+
     function goToProduct(title, price, img) {
-      currentProduct = { title, price };
+      currentProduct = { title, price, img };
       document.querySelector(".grid-container").style.display = "none";
       document.querySelector(".pagination").style.display = "none";
       const productPage = document.querySelector(".product-page");
@@ -146,8 +182,14 @@
       productPage.innerHTML = `
         <h1>\${title}</h1>
         <img src="\${img}" style="max-width:300px; border-radius:16px" alt="\${title}">
-        <div class="price">\${price}</div>
+        <div class="price">\$<span id="unitPrice">\${price}</span></div>
+        <div style="margin-top: 10px;">
+          數量：<input type="number" id="quantity" value="1" min="1" style="width: 60px;">
+        </div>
         <div style="margin-top: 20px; font-size: 16px; color: #555;">這裡可以放商品描述～你可以手動更改這段內容來介紹這個商品！</div>
+        <br><button class="button" onclick="addProductToCart()">加入購物車</button>
+        <br><button class="button" onclick="document.querySelector('.order-form').style.display = 'flex'">立即下單</button>
+        <br><button class="back-button" onclick="goBack()">← 回上一頁</button>
         <div class="order-form">
           <input type="text" id="name" placeholder="姓名" required>
           <input type="text" id="phone" placeholder="電話" required>
@@ -159,8 +201,12 @@
           </select>
           <button class="button" onclick="submitOrder()">確認下單</button>
         </div>
-        <br><button class="back-button" onclick="goBack()">← 回上一頁</button>
       `;
+    }
+
+    function addProductToCart() {
+      const quantity = parseInt(document.getElementById("quantity").value);
+      addToCart(currentProduct.title, parseFloat(currentProduct.price), quantity);
     }
 
     function submitOrder() {
@@ -175,9 +221,7 @@
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({
-          name, phone, address, payment
-        })
+        body: JSON.stringify({ name, phone, address, payment })
       });
 
       alert("✅ 訂單已送出！感謝您的購買 ❤️");
@@ -194,26 +238,24 @@
 <body>
   <header>
     Kobayashi Shop - 日本零食與娃娃專賣
-    <div id="cartIcon" title="購物車">0</div>
+    <div id="cartIcon" title="購物車" onclick="toggleCartDetails()">0</div>
+    <div id="cartDetails"></div>
   </header>
 
   <div class="grid-container">
-    <div class="card" onclick="goToProduct('可愛娃娃1號', '$299', 'https://placehold.co/300x200?text=商品1')">
+    <div class="card" onclick="goToProduct('可愛娃娃1號', '299', 'https://placehold.co/300x200?text=商品1')">
       <img src="https://placehold.co/300x200?text=商品1" alt="商品1">
       <div class="title">可愛娃娃1號</div>
       <div class="price">$299</div>
-      <button class="button" onclick="event.stopPropagation(); addToCart('可愛娃娃1號')">加入購物車</button>
+      <button class="button" onclick="event.stopPropagation(); addToCart('可愛娃娃1號', 299)">加入購物車</button>
     </div>
-    <div class="card" onclick="goToProduct('東京限定餅乾', '$180', 'https://placehold.co/300x200?text=商品2')">
+    <div class="card" onclick="goToProduct('東京限定餅乾', '180', 'https://placehold.co/300x200?text=商品2')">
       <img src="https://placehold.co/300x200?text=商品2" alt="商品2">
       <div class="title">東京限定餅乾</div>
       <div class="price">$180</div>
-      <button class="button" onclick="event.stopPropagation(); addToCart('東京限定餅乾')">加入購物車</button>
+      <button class="button" onclick="event.stopPropagation(); addToCart('東京限定餅乾', 180)">加入購物車</button>
     </div>
-    <div class="card"><img src="https://placehold.co/300x200?text=商品3" alt="商品3"><div class="title">限定娃娃A</div><div class="price">$320</div><button class="button" onclick="event.stopPropagation(); addToCart('限定娃娃A')">加入購物車</button></div>
-    <div class="card"><img src="https://placehold.co/300x200?text=商品4" alt="商品4"><div class="title">抹茶巧克力</div><div class="price">$120</div><button class="button" onclick="event.stopPropagation(); addToCart('抹茶巧克力')">加入購物車</button></div>
-    <div class="card"><img src="https://placehold.co/300x200?text=商品5" alt="商品5"><div class="title">草莓餅乾</div><div class="price">$140</div><button class="button" onclick="event.stopPropagation(); addToCart('草莓餅乾')">加入購物車</button></div>
-    <div class="card"><img src="https://placehold.co/300x200?text=商品6" alt="商品6"><div class="title">柴犬娃娃</div><div class="price">$350</div><button class="button" onclick="event.stopPropagation(); addToCart('柴犬娃娃')">加入購物車</button></div>
+    <!-- 其他商品卡片可依此格式繼續複製 -->
   </div>
 
   <div class="pagination">
