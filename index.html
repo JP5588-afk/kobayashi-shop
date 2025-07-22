@@ -87,6 +87,19 @@
     .button:hover {
       background-color: #ff1493;
     }
+    .pagination {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .pagination button {
+      margin: 0 10px;
+      padding: 8px 20px;
+      background: #ff69b4;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
     .product-page {
       display: none;
       text-align: center;
@@ -111,6 +124,7 @@
 
     function goToProduct(title, price, img) {
       document.querySelector(".grid-container").style.display = "none";
+      document.querySelector(".pagination").style.display = "none";
       const productPage = document.querySelector(".product-page");
       productPage.style.display = "block";
       productPage.innerHTML = `
@@ -126,6 +140,7 @@
 
     function goBack() {
       document.querySelector(".grid-container").style.display = "grid";
+      document.querySelector(".pagination").style.display = "block";
       document.querySelector(".product-page").style.display = "none";
     }
   </script>
@@ -137,7 +152,8 @@
   </header>
 
   <div class="grid-container">
-    <!-- 商品卡片示範 -->
+    <!-- 商品卡片們 -->
+    <!-- 複製這段即可新增更多商品 -->
     <div class="card" onclick="goToProduct('可愛娃娃1號', '$299', 'https://placehold.co/300x200?text=商品1')">
       <img src="https://placehold.co/300x200?text=商品1" alt="商品1">
       <div class="title">可愛娃娃1號</div>
@@ -151,8 +167,12 @@
       <div class="price">$180</div>
       <button class="button" onclick="event.stopPropagation(); addToCart('東京限定餅乾')">加入購物車</button>
     </div>
+    <!-- 可再新增 4-6 個商品卡片 -->
+  </div>
 
-    <!-- 可繼續複製商品區塊來擴展 -->
+  <div class="pagination">
+    <button onclick="alert('尚未開放上一頁')">← 上一頁</button>
+    <button onclick="alert('下一頁尚未建置，但你可以複製商品區塊自行新增！')">下一頁 →</button>
   </div>
 
   <div class="product-page"></div>
