@@ -38,14 +38,11 @@
     }
     .grid-container {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       gap: 20px;
       padding: 30px;
-      justify-items: center;
     }
     .card {
-      width: 90%;
-      max-width: 300px;
       background: white;
       border-radius: 20px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
@@ -87,6 +84,19 @@
     .button:hover {
       background-color: #ff1493;
     }
+    .product-page {
+      display: none;
+      text-align: center;
+      padding: 30px;
+    }
+    .back-button {
+      margin-top: 20px;
+      padding: 8px 20px;
+      background-color: #ccc;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
   </style>
   <script>
     let cartCount = 0;
@@ -97,30 +107,23 @@
     }
 
     function goToProduct(title, price, img) {
-      const newPage = window.open('', '_blank');
-      newPage.document.write(`
-        <html>
-        <head>
-          <title>${title}</title>
-          <style>
-            body { font-family: sans-serif; background: #fffafc; text-align: center; padding: 40px; }
-            img { width: 300px; border-radius: 16px; }
-            h1 { color: #e75480; }
-            .price { font-size: 20px; margin: 10px 0; }
-            .desc { margin-top: 20px; font-size: 16px; color: #555; }
-            button { margin-top: 20px; padding: 10px 20px; background: #ff69b4; color: white; border: none; border-radius: 8px; }
-            button:hover { background: #ff1493; }
-          </style>
-        </head>
-        <body>
-          <h1>${title}</h1>
-          <img src="${img}" alt="${title}">
-          <div class="price">${price}</div>
-          <div class="desc">這裡可以放商品描述～你可以手動更改這段內容來介紹這個商品！</div>
-          <button onclick="alert('已加入購物車！')">加入購物車</button>
-        </body>
-        </html>
-      `);
+      document.querySelector(".grid-container").style.display = "none";
+      const productPage = document.querySelector(".product-page");
+      productPage.style.display = "block";
+      productPage.innerHTML = `
+        <h1>\${title}</h1>
+        <img src="\${img}" style="max-width:300px; border-radius:16px" alt="\${title}">
+        <div class="price">\${price}</div>
+        <div style="margin-top: 20px; font-size: 16px; color: #555;">這裡可以放商品描述～你可以手動更改這段內容來介紹這個商品！</div>
+        <button class="button" style="margin-top: 20px" onclick="addToCart('\${title}')">加入購物車</button>
+        <br><br>
+        <button class="back-button" onclick="goBack()">← 回上一頁</button>
+      `;
+    }
+
+    function goBack() {
+      document.querySelector(".grid-container").style.display = "grid";
+      document.querySelector(".product-page").style.display = "none";
     }
   </script>
 </head>
@@ -129,6 +132,7 @@
     Kobayashi Shop - 日本零食與娃娃專賣
     <div id="cartIcon" title="購物車">0</div>
   </header>
+
   <div class="grid-container">
     <!-- 商品卡片示範 -->
     <div class="card" onclick="goToProduct('可愛娃娃1號', '$299', 'https://placehold.co/300x200?text=商品1')">
@@ -147,6 +151,7 @@
 
     <!-- 可繼續複製商品區塊來擴展 -->
   </div>
+
+  <div class="product-page"></div>
 </body>
 </html>
-
