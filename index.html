@@ -38,7 +38,7 @@
     }
     .grid-container {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
       gap: 16px;
       padding: 24px;
       max-width: 960px;
@@ -59,28 +59,28 @@
     }
     .card img {
       width: 100%;
-      height: 160px;
+      height: 120px;
       object-fit: cover;
       border-radius: 12px;
     }
     .title {
-      font-size: 16px;
+      font-size: 14px;
       margin-top: 10px;
       font-weight: bold;
     }
     .price {
       color: #e75480;
-      font-size: 15px;
+      font-size: 14px;
       margin-top: 5px;
     }
     .button {
-      margin-top: 10px;
-      padding: 6px 12px;
+      margin-top: 8px;
+      padding: 5px 10px;
       background-color: #ff69b4;
       color: white;
       border: none;
       border-radius: 8px;
-      font-size: 14px;
+      font-size: 13px;
       cursor: pointer;
       transition: background-color 0.2s;
     }
@@ -152,27 +152,28 @@
   </header>
 
   <div class="grid-container">
-    <!-- 商品卡片們 -->
-    <!-- 複製這段即可新增更多商品 -->
+    <!-- 商品卡片範例，可複製新增更多 -->
     <div class="card" onclick="goToProduct('可愛娃娃1號', '$299', 'https://placehold.co/300x200?text=商品1')">
       <img src="https://placehold.co/300x200?text=商品1" alt="商品1">
       <div class="title">可愛娃娃1號</div>
       <div class="price">$299</div>
       <button class="button" onclick="event.stopPropagation(); addToCart('可愛娃娃1號')">加入購物車</button>
     </div>
-
     <div class="card" onclick="goToProduct('東京限定餅乾', '$180', 'https://placehold.co/300x200?text=商品2')">
       <img src="https://placehold.co/300x200?text=商品2" alt="商品2">
       <div class="title">東京限定餅乾</div>
       <div class="price">$180</div>
       <button class="button" onclick="event.stopPropagation(); addToCart('東京限定餅乾')">加入購物車</button>
     </div>
-    <!-- 可再新增 4-6 個商品卡片 -->
+    <div class="card"><img src="https://placehold.co/300x200?text=商品3" alt="商品3"><div class="title">限定娃娃A</div><div class="price">$320</div><button class="button" onclick="event.stopPropagation(); addToCart('限定娃娃A')">加入購物車</button></div>
+    <div class="card"><img src="https://placehold.co/300x200?text=商品4" alt="商品4"><div class="title">抹茶巧克力</div><div class="price">$120</div><button class="button" onclick="event.stopPropagation(); addToCart('抹茶巧克力')">加入購物車</button></div>
+    <div class="card"><img src="https://placehold.co/300x200?text=商品5" alt="商品5"><div class="title">草莓餅乾</div><div class="price">$140</div><button class="button" onclick="event.stopPropagation(); addToCart('草莓餅乾')">加入購物車</button></div>
+    <div class="card"><img src="https://placehold.co/300x200?text=商品6" alt="商品6"><div class="title">柴犬娃娃</div><div class="price">$350</div><button class="button" onclick="event.stopPropagation(); addToCart('柴犬娃娃')">加入購物車</button></div>
   </div>
 
   <div class="pagination">
-    <button onclick="alert('尚未開放上一頁')">← 上一頁</button>
-    <button onclick="alert('下一頁尚未建置，但你可以複製商品區塊自行新增！')">下一頁 →</button>
+    <button onclick="alert('← 上一頁功能尚未開放')">← 上一頁</button>
+    <button onclick="alert('→ 下一頁功能尚未建置')">下一頁 →</button>
   </div>
 
   <div class="product-page"></div>
