@@ -45,9 +45,10 @@
       border-radius: 10px;
       padding: 10px;
       display: none;
-      width: 220px;
+      width: 260px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
       font-size: 14px;
+      z-index: 1000;
     }
     .grid-container {
       display: grid;
@@ -87,7 +88,7 @@
       margin-top: 5px;
     }
     .button {
-      margin-top: 8px;
+      margin: 5px;
       padding: 5px 10px;
       background-color: #ff69b4;
       color: white;
@@ -145,12 +146,12 @@
     let cart = [];
     let currentProduct = {};
 
-    function addToCart(title, price) {
+    function addToCart(title, price, quantity = 1) {
       const existing = cart.find(item => item.title === title);
       if (existing) {
-        existing.quantity += 1;
+        existing.quantity += quantity;
       } else {
-        cart.push({ title, price, quantity: 1 });
+        cart.push({ title, price, quantity });
       }
       updateCartIcon();
       alert(`${title} 已加入購物車！`);
@@ -167,7 +168,7 @@
         cartDetails.style.display = 'none';
       } else {
         cartDetails.innerHTML = '<strong>購物車內容：</strong><ul>' +
-          cart.map(item => `<li>\${item.title} x \${item.quantity} - \$\${item.price * item.quantity}</li>`).join('') +
+          cart.map(item => `<li>${item.title} x ${item.quantity} - \$${item.price * item.quantity}</li>`).join('') +
           '</ul>';
         cartDetails.style.display = 'block';
       }
@@ -180,15 +181,17 @@
       const productPage = document.querySelector(".product-page");
       productPage.style.display = "block";
       productPage.innerHTML = `
-        <h1>\${title}</h1>
-        <img src="\${img}" style="max-width:300px; border-radius:16px" alt="\${title}">
-        <div class="price">\$<span id="unitPrice">\${price}</span></div>
+        <h1>${title}</h1>
+        <img src="${img}" style="max-width:300px; border-radius:16px" alt="${title}">
+        <div class="price">$<span id="unitPrice">${price}</span></div>
         <div style="margin-top: 10px;">
           數量：<input type="number" id="quantity" value="1" min="1" style="width: 60px;">
         </div>
         <div style="margin-top: 20px; font-size: 16px; color: #555;">這裡可以放商品描述～你可以手動更改這段內容來介紹這個商品！</div>
-        <br><button class="button" onclick="addProductToCart()">加入購物車</button>
-        <br><button class="button" onclick="document.querySelector('.order-form').style.display = 'flex'">立即下單</button>
+        <div style="margin-top: 10px">
+          <button class="button" onclick="addProductToCart()">加入購物車</button>
+          <button class="button" onclick="showOrderForm()">立即下單</button>
+        </div>
         <br><button class="back-button" onclick="goBack()">← 回上一頁</button>
         <div class="order-form">
           <input type="text" id="name" placeholder="姓名" required>
@@ -202,6 +205,11 @@
           <button class="button" onclick="submitOrder()">確認下單</button>
         </div>
       `;
+    }
+
+    function showOrderForm() {
+      document.querySelector(".order-form").style.display = "flex";
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     }
 
     function addProductToCart() {
@@ -255,7 +263,6 @@
       <div class="price">$180</div>
       <button class="button" onclick="event.stopPropagation(); addToCart('東京限定餅乾', 180)">加入購物車</button>
     </div>
-    <!-- 其他商品卡片可依此格式繼續複製 -->
   </div>
 
   <div class="pagination">
