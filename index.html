@@ -7,7 +7,7 @@
   <style>
     body {
       font-family: "Segoe UI", "Helvetica Neue", sans-serif;
-      background-color: #fff8fc;
+      background-color: #fff0f5;
       margin: 0;
       padding: 40px 20px;
     }
@@ -52,7 +52,7 @@
     }
 
     .product {
-      background: #fff0f5;
+      background: #ffe4ec;
       border-radius: 20px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.06);
       overflow: hidden;
@@ -136,10 +136,12 @@
       background: #ff1493;
     }
 
-    select {
-      padding: 6px;
-      border-radius: 8px;
-      margin-top: 10px;
+    select, input[type="text"], input[type="tel"] {
+      padding: 8px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      width: 100%;
+      margin-bottom: 10px;
     }
 
     @media (max-width: 600px) {
@@ -159,117 +161,68 @@
   </header>
 
   <div id="product-list" class="grid"></div>
-
   <div class="pagination"></div>
-
   <div id="product-detail"></div>
   <div id="cart-page"></div>
   <div id="checkout-page"></div>
 
   <script>
-    const products = [
-      { id: 1, name: "日本零食A", price: 100, img: "https://via.placeholder.com/300x200?text=商品A", desc: "超人氣日本零食，酥脆美味。" },
-      { id: 2, name: "日本娃娃B", price: 250, img: "https://via.placeholder.com/300x200?text=商品B", desc: "可愛日本娃娃，收藏必備。" },
-      { id: 3, name: "抹茶餅乾C", price: 150, img: "https://via.placeholder.com/300x200?text=商品C", desc: "香濃抹茶味餅乾，香氣十足。" },
-      { id: 4, name: "布丁D", price: 90, img: "https://via.placeholder.com/300x200?text=商品D", desc: "滑嫩布丁，入口即化。" },
-      { id: 5, name: "扭蛋E", price: 200, img: "https://via.placeholder.com/300x200?text=商品E", desc: "趣味扭蛋，隨機驚喜。" },
-      { id: 6, name: "卡通筆記本F", price: 120, img: "https://via.placeholder.com/300x200?text=商品F", desc: "日本卡通風格，學生最愛。" }
-    ];
+    const products = [...]; // 商品列表略
     let cart = [];
 
-    function renderProducts() {
-      document.getElementById('product-list').innerHTML = products.map(p => `
-        <div class="product" onclick="showDetail(${p.id})">
-          <img src="${p.img}" />
-          <h2>${p.name}</h2>
-          <p>$${p.price}</p>
-        </div>
-      `).join('');
-    }
-
-    function showDetail(id) {
-      const p = products.find(x => x.id === id);
-      document.getElementById('product-list').style.display = 'none';
-      document.getElementById('product-detail').style.display = 'block';
-      let qtyOptions = '<select id="select-qty">' + Array.from({ length: 10 }, (_, i) => `<option value="${i+1}">${i+1}</option>`).join('') + '</select>';
-      document.getElementById('product-detail').innerHTML = `
-        <button onclick="goBack()">← 返回</button>
-        <h2>${p.name}</h2>
-        <img src="${p.img}" style="width:100%;max-width:400px;border-radius:12px;"/>
-        <p>${p.desc}</p>
-        <p><strong>$${p.price}</strong></p>
-        數量：${qtyOptions}<br>
-        <button onclick="addToCart(${p.id})">加入購物車</button>
-        <button onclick="goToCart()">立即下單</button>
-      `;
-    }
-
-    function goBack() {
-      document.getElementById('product-detail').style.display = 'none';
-      document.getElementById('product-list').style.display = 'grid';
-    }
-
-    function addToCart(id) {
-      const qty = parseInt(document.getElementById('select-qty')?.value || 1);
-      const found = cart.find(x => x.id === id);
-      if (found) found.qty += qty;
-      else cart.push({ id, qty });
-      document.getElementById('cart-count').innerText = cart.reduce((s,x) => s + x.qty, 0);
-    }
-
-    function showCart() {
-      document.getElementById('product-list').style.display = 'none';
-      document.getElementById('product-detail').style.display = 'none';
-      document.getElementById('checkout-page').style.display = 'none';
-      document.getElementById('cart-page').style.display = 'block';
-      document.getElementById('cart-page').innerHTML = cart.map(c => {
-        const p = products.find(x => x.id === c.id);
-        return `
-          <div class="cart-item">
-            <img src="${p.img}" />
-            <div>
-              <strong>${p.name}</strong><br>$${p.price} x 
-              <input type='number' value='${c.qty}' onchange='updateQty(${c.id}, this.value)' />
-            </div>
-            <div>$${p.price * c.qty}</div>
-          </div>
-        `;
-      }).join('') + `
-        <button onclick="goCheckout()">下單</button>
-      `;
-    }
-
-    function updateQty(id, qty) {
-      const found = cart.find(x => x.id === id);
-      if (found) found.qty = parseInt(qty);
-      showCart();
-      document.getElementById('cart-count').innerText = cart.reduce((s,x) => s + x.qty, 0);
-    }
-
-    function goToCart() {
-      showCart();
-    }
+    function renderProducts() { /* ...略... */ }
+    function showDetail(id) { /* ...略... */ }
+    function goBack() { /* ...略... */ }
+    function addToCart(id) { /* ...略... */ }
+    function showCart() { /* ...略... */ }
+    function updateQty(id, qty) { /* ...略... */ }
+    function goToCart() { showCart(); }
 
     function goCheckout() {
       document.getElementById('cart-page').style.display = 'none';
       document.getElementById('checkout-page').style.display = 'block';
       document.getElementById('checkout-page').innerHTML = `
-        <h2>填寫個人資料</h2>
+        <h2>填寫訂單資訊</h2>
         <form onsubmit="submitOrder(event)">
-          姓名：<input type="text" id="name" required/><br><br>
-          電話：<input type="tel" id="phone" required/><br><br>
-          地址：<input type="text" id="address" required/><br><br>
+          姓名：<input type="text" id="name" required/><br>
+          電話：<input type="tel" id="phone" required/><br>
+          超商類型：<select id="storeType" required>
+            <option value="">請選擇</option>
+            <option>7-11</option>
+            <option>全家</option>
+            <option>OK超商</option>
+            <option>萊爾富</option>
+            <option>蝦皮店到店</option>
+          </select><br>
+          <button type="button" onclick="openStoreLink()">選擇門市 🔗</button><br><br>
+          門市資訊：<input type="text" id="storeInfo" placeholder="請從選店頁複製門市地址" required/><br>
           <button type="submit">前往付款</button>
         </form>
       `;
     }
 
+    function openStoreLink() {
+      const type = document.getElementById("storeType").value;
+      const links = {
+        "7-11": "https://emap.pcsc.com.tw/emap.aspx",
+        "全家": "https://www.family.com.tw/Marketing/Map",
+        "OK超商": "https://www.okmart.com.tw/convenient_shopSearch",
+        "萊爾富": "https://www.hilife.com.tw/storeInquiry_street.aspx",
+        "蝦皮店到店": "https://store.shopee.tw/"
+      };
+      if (links[type]) window.open(links[type], '_blank');
+      else alert('請先選擇超商類型');
+    }
+
     async function submitOrder(e) {
       e.preventDefault();
-      const name = document.getElementById('name').value;
-      const phone = document.getElementById('phone').value;
-      const address = document.getElementById('address').value;
-      const order = { name, phone, address, cart };
+      const order = {
+        name: document.getElementById('name').value,
+        phone: document.getElementById('phone').value,
+        storeType: document.getElementById('storeType').value,
+        storeInfo: document.getElementById('storeInfo').value,
+        cart
+      };
 
       try {
         const response = await fetch('https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec', {
