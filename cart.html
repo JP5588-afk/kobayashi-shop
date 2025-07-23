@@ -12,6 +12,7 @@
       padding: 0;
       overflow-x: hidden;
     }
+
     .container {
       max-width: 600px;
       margin: 40px auto;
@@ -20,16 +21,30 @@
       border-radius: 12px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
+
     h2 {
       text-align: center;
       color: #d63384;
     }
+
     label {
       display: block;
       margin-top: 15px;
       font-weight: bold;
     }
-    input, select {
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+      appearance: none;
+      background-color: #fff;
+    }
+
+    select {
       width: 100%;
       padding: 10px;
       margin-top: 5px;
@@ -43,12 +58,14 @@
       background-position: right 10px center;
       background-size: 10px;
     }
+
     .button-group {
       display: flex;
       justify-content: center;
       gap: 20px;
       margin-top: 30px;
     }
+
     .btn {
       background-color: #ff69b4;
       color: white;
@@ -59,9 +76,11 @@
       cursor: pointer;
       transition: background 0.3s;
     }
+
     .btn:hover {
       background-color: #ff92c2;
     }
+
     #order-summary {
       background-color: #fff8fb;
       padding: 15px;
@@ -69,23 +88,28 @@
       margin-top: 20px;
       border: 1px solid #ffd0e1;
     }
+
     #order-summary h3 {
       margin-top: 0;
       color: #d63384;
     }
+
     #order-summary ul {
       list-style: none;
       padding-left: 0;
     }
+
     #order-summary ul li {
       padding: 6px 0;
       border-bottom: 1px dashed #ffc0cb;
     }
+
     #total {
       text-align: right;
       font-weight: bold;
       margin-top: 10px;
     }
+
     .store-input {
       display: none;
       margin-top: 10px;
@@ -159,7 +183,7 @@
     }
 
     pickup.addEventListener('change', function () {
-      if (['store', '711', 'family'].includes(this.value)) {
+      if (this.value) {
         storeInput.style.display = 'block';
       } else {
         storeInput.style.display = 'none';
@@ -168,3 +192,4 @@
   </script>
 </body>
 </html>
+
