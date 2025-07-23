@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>購物車 - 小林日貨鋪</title>
+  <style>
+    body {
+      background-color: #fff1f7;
+      font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+      padding: 20px;
+    }
+    h2 {
+      text-align: center;
+      color: #d63384;
+    }
+    .cart-item {
+      background: white;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .cart-item img {
+      width: 60px;
+      border-radius: 8px;
+    }
+    .item-info {
+      flex-grow: 1;
+      padding: 0 10px;
+    }
+    .checkout-btn, .back-btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      background: #ff69b4;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .checkout-btn:hover, .back-btn:hover {
+      background: #ff92c2;
+    }
+  </style>
+</head>
+<body>
+  <h2>🛒 購物車</h2>
+  <div id="cart-items"></div>
+  <button class="checkout-btn" onclick="window.location.href='checkout.html'">前往結帳</button>
+  <button class="back-btn" onclick="window.location.href='index.html'">← 回到首頁</button>
+
+  <script>
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    const container = document.getElementById('cart-items');
+    if (cart.length === 0) {
+      container.innerHTML = '<p>目前購物車是空的喔！</p>';
+    } else {
+      cart.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+        div.innerHTML = `
+          <img src="https://via.placeholder.com/60" />
+          <div class="item-info">
+            <strong>${item.name}</strong><br>
+            數量：${item.quantity}<br>
+            價格：$${item.price}
+          </div>
+          <div>$${item.price * item.quantity}</div>
+        `;
+        container.appendChild(div);
+      });
+    }
+  </script>
+</body>
+</html>
