@@ -112,37 +112,8 @@
       text-align: center;
       margin: 20px;
     }
-    #product-detail {
+    #product-detail, #checkout-page {
       display: none;
-      padding: 20px;
-      background: white;
-      margin: 20px;
-      border-radius: 10px;
-      text-align: center;
-    }
-    #checkout-page {
-      display: none;
-      max-width: 800px;
-      margin: 20px auto;
-      background: #fffafc;
-      padding: 20px;
-      border-radius: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-    }
-    .payment-select {
-      display: block;
-      margin: 10px;
-    }
-    .store-info-input {
-      display: none;
-      margin: 10px;
-    }
-    .payment-app-link {
-      display: none;
-      margin-left: 10px;
-      color: #007bff;
-      text-decoration: underline;
-      cursor: pointer;
     }
     @media (min-width: 600px) {
       .grid {
@@ -153,92 +124,77 @@
 </head>
 <body>
   <header>
-    <div class="menu-icon">☰</div>
+    <div class="menu-icon" onclick="toggleSidebar()">☰</div>
     <h1>小林日貨鋪</h1>
-    <div class="cart-icon">🛒<span>0</span></div>
+    <div class="cart-icon" onclick="window.location.href='cart.html'">🛒<span id="cart-count">0</span></div>
   </header>
-  <div class="sidebar">
+  <div class="sidebar" id="sidebar">
     <h3>分類</h3>
     <ul>
-      <li>全部商品</li>
-      <li>日本零食</li>
-      <li>可愛娃娃</li>
-      <li>生活雜貨</li>
+      <li onclick="filterCategory('all')">全部商品</li>
+      <li onclick="filterCategory('snacks')">日本零食</li>
+      <li onclick="filterCategory('dolls')">可愛娃娃</li>
+      <li onclick="filterCategory('daily')">生活雜貨</li>
     </ul>
-    <button class="back-button">← 返回</button>
+    <button class="back-button" onclick="toggleSidebar()">← 返回</button>
   </div>
-  <div class="grid">
-    <div class="product">
-      <img src="https://via.placeholder.com/150" alt="產品1">
-      <h3>可愛娃娃1號</h3>
-      <p>$299</p>
-    </div>
-    <div class="product">
-      <img src="https://via.placeholder.com/150" alt="產品2">
-      <h3>東京限定餅乾</h3>
-      <p>$180</p>
-    </div>
-    <div class="product">
-      <img src="https://via.placeholder.com/150" alt="產品3">
-      <h3>和風抹茶糖</h3>
-      <p>$150</p>
-    </div>
-    <div class="product">
-      <img src="https://via.placeholder.com/150" alt="產品4">
-      <h3>櫻花吊飾</h3>
-      <p>$120</p>
-    </div>
-    <div class="product">
-      <img src="https://via.placeholder.com/150" alt="產品5">
-      <h3>日式文具組</h3>
-      <p>$250</p>
-    </div>
-    <div class="product">
-      <img src="https://via.placeholder.com/150" alt="產品6">
-      <h3>拉麵鑰匙圈</h3>
-      <p>$199</p>
-    </div>
-  </div>
+  <div class="grid" id="product-grid"></div>
   <div class="pagination">
-    <button class="back-button">下一頁</button>
-  </div>
-  <div id="product-detail"></div>
-  <div id="checkout-page">
-    <h2>結帳資訊</h2>
-    <label>姓名：<input type="text" name="name" /></label><br>
-    <label>電話：<input type="tel" name="phone" /></label><br>
-    <label>取貨方式：
-      <select name="pickup-method" onchange="toggleStoreInput(this.value)">
-        <option value="">請選擇</option>
-        <option value="7-11">7-11</option>
-        <option value="全家">全家</option>
-        <option value="萊爾富">萊爾富</option>
-        <option value="OK超商">OK超商</option>
-        <option value="蝦皮店到店">蝦皮店到店</option>
-        <option value="貨到付款">貨到付款</option>
-      </select>
-    </label><br>
-    <label class="store-info-input" id="store-info">門市名稱：<input type="text" name="store-name" /></label><br>
-    <label>付款方式：
-      <select name="payment-method" onchange="togglePaymentApp(this.value)">
-        <option value="bank">轉帳</option>
-        <option value="linepay">全支付</option>
-        <option value="jkopay">街口支付</option>
-        <option value="cod">貨到付款</option>
-      </select>
-    </label>
-    <span class="payment-app-link" id="pay-app-link" onclick="alert('這是支付連結範例')">開啟支付 App</span><br>
-    <button type="submit">送出訂單</button>
+    <button class="back-button" onclick="nextPage()">下一頁</button>
   </div>
   <script>
-    function toggleStoreInput(value) {
-      const storeInput = document.getElementById('store-info');
-      storeInput.style.display = (value && value !== '貨到付款') ? 'block' : 'none';
+    const products = [
+      { name: '可愛娃娃1號', price: 299, category: 'dolls' },
+      { name: '東京限定餅乾', price: 180, category: 'snacks' },
+      { name: '和風抹茶糖', price: 150, category: 'snacks' },
+      { name: '櫻花吊飾', price: 120, category: 'daily' },
+      { name: '日式文具組', price: 250, category: 'daily' },
+      { name: '拉麵鑰匙圈', price: 199, category: 'daily' },
+      { name: '可愛娃娃2號', price: 320, category: 'dolls' },
+      { name: '北海道牛奶糖', price: 110, category: 'snacks' },
+    ];
+    let currentPage = 1;
+    const itemsPerPage = 6;
+    let currentCategory = 'all';
+
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('active');
     }
-    function togglePaymentApp(value) {
-      const appLink = document.getElementById('pay-app-link');
-      appLink.style.display = (value === 'linepay' || value === 'jkopay') ? 'inline' : 'none';
+
+    function renderProducts() {
+      const grid = document.getElementById('product-grid');
+      grid.innerHTML = '';
+      const filtered = currentCategory === 'all' ? products : products.filter(p => p.category === currentCategory);
+      const start = (currentPage - 1) * itemsPerPage;
+      const items = filtered.slice(start, start + itemsPerPage);
+      for (const [index, p] of items.entries()) {
+        const div = document.createElement('div');
+        div.className = 'product';
+        div.innerHTML = `<img src="https://via.placeholder.com/150" alt="產品"><h3>${p.name}</h3><p>$${p.price}</p>`;
+        div.onclick = () => alert(`${p.name} 詳細頁功能未完成`);
+        grid.appendChild(div);
+      }
     }
+
+    function filterCategory(cat) {
+      currentCategory = cat;
+      currentPage = 1;
+      renderProducts();
+      toggleSidebar();
+    }
+
+    function nextPage() {
+      const filtered = currentCategory === 'all' ? products : products.filter(p => p.category === currentCategory);
+      const totalPages = Math.ceil(filtered.length / itemsPerPage);
+      if (currentPage < totalPages) {
+        currentPage++;
+        renderProducts();
+      }
+    }
+
+    window.onload = () => {
+      renderProducts();
+    };
   </script>
 </body>
 </html>
