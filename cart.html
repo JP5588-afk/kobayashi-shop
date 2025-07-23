@@ -121,7 +121,7 @@
 
       <div id="store-name" class="store-input">
         <label for="storeInput">請輸入取貨店名：</label>
-        <input type="text" id="storeInput">
+        <input type="text" id="storeInput" required>
       </div>
 
       <div id="order-summary">
@@ -138,33 +138,14 @@
   </div>
 
   <script>
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    const summaryList = document.getElementById('summary-list');
-    const totalDisplay = document.getElementById('total');
-    const pickup = document.getElementById('pickup');
-    const storeInput = document.getElementById('store-name');
+    document.addEventListener('DOMContentLoaded', function () {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const summaryList = document.getElementById('summary-list');
+      const totalDisplay = document.getElementById('total');
+      const pickup = document.getElementById('pickup');
+      const storeInput = document.getElementById('store-name');
 
-    let total = 0;
+      let total = 0;
 
-    if (cart.length === 0) {
-      summaryList.innerHTML = '<li>目前購物車是空的。</li>';
-    } else {
-      cart.forEach(item => {
-        const li = document.createElement('li');
-        li.innerHTML = `<img src="https://via.placeholder.com/30" style="vertical-align: middle; margin-right: 8px;">${item.name} x ${item.quantity} - $${item.price * item.quantity}`;
-        summaryList.appendChild(li);
-        total += item.price * item.quantity;
-      });
-      totalDisplay.textContent = `總金額：$${total}`;
-    }
-
-    pickup.addEventListener('change', function() {
-      if (this.value) {
-        storeInput.style.display = 'block';
-      } else {
-        storeInput.style.display = 'none';
-      }
-    });
-  </script>
-</body>
-</html>
+      if (cart.length === 0) {
+        summaryList.innerHTML = '<li>目前購物車是空的。</li
