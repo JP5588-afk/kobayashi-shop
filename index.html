@@ -79,7 +79,7 @@
       margin-top: 20px;
       cursor: pointer;
     }
-    select, button {
+    select, button, input[type="text"] {
       margin: 10px;
       padding: 8px;
       border-radius: 8px;
@@ -255,18 +255,31 @@
       const page = document.getElementById("checkout-page");
       page.innerHTML = `
         <h2>結帳資訊</h2>
-        <label>姓名：<input type="text" style="margin:5px"></label><br>
-        <label>電話：<input type="text" style="margin:5px"></label><br>
-        <label>地址：<input type="text" style="margin:5px"></label><br>
+        <label>姓名：<input type="text"></label><br>
+        <label>電話：<input type="text"></label><br>
         <label>取貨方式：
-          <select>
-            <option>超商</option>
-            <option>蝦皮店到店</option>
-            <option>貨到付款</option>
+          <select id="pickup-method" onchange="handlePickupChange(this.value)">
+            <option value="">請選擇</option>
+            <option value="7-11">7-11</option>
+            <option value="全家">全家</option>
+            <option value="萊爾富">萊爾富</option>
+            <option value="OK">OK</option>
+            <option value="蝦皮店到店">蝦皮店到店</option>
+            <option value="貨到付款">貨到付款</option>
           </select>
         </label><br>
+        <div id="pickup-info" style="margin:10px 0;"></div>
         <button onclick="alert('訂單已送出')">送出訂單</button>
       `;
+    }
+
+    function handlePickupChange(value) {
+      const info = document.getElementById("pickup-info");
+      if (value) {
+        info.innerHTML = `<label>門市名稱：<input type="text" placeholder="請輸入門市名稱"></label>`;
+      } else {
+        info.innerHTML = "";
+      }
     }
 
     renderProducts();
