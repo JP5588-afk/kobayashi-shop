@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>結帳頁面</title>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background-color: #fff1f7;
+      margin: 0;
+      padding: 20px;
+    }
+    h2 {
+      color: #333;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      margin-top: 5px;
+    }
+    .store-input {
+      display: none;
+    }
+    .submit-btn {
+      background-color: #ff69b4;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 10px;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+    .submit-btn:hover {
+      background-color: #ff85c1;
+    }
+  </style>
+</head>
+<body>
+  <h2>結帳資訊</h2>
+  <form id="checkout-form">
+    <label for="name">姓名：</label>
+    <input type="text" id="name" required>
+
+    <label for="phone">電話：</label>
+    <input type="tel" id="phone" required>
+
+    <label for="payment">付款方式：</label>
+    <select id="payment" required>
+      <option value="">請選擇</option>
+      <option value="轉帳">轉帳</option>
+      <option value="全支付">全支付</option>
+      <option value="街口支付">街口支付</option>
+      <option value="貨到付款">貨到付款</option>
+    </select>
+
+    <label for="delivery">取貨方式：</label>
+    <select id="delivery" required>
+      <option value="">請選擇</option>
+      <option value="711">7-11</option>
+      <option value="全家">全家</option>
+      <option value="萊爾富">萊爾富</option>
+      <option value="OK">OK</option>
+      <option value="蝦皮店到店">蝦皮店到店</option>
+    </select>
+
+    <div id="store-wrapper" class="store-input">
+      <label for="store">門市名稱：</label>
+      <input type="text" id="store" placeholder="請輸入取貨門市">
+    </div>
+
+    <button class="submit-btn" type="submit">送出訂單</button>
+  </form>
+
+  <script>
+    const deliverySelect = document.getElementById('delivery');
+    const storeWrapper = document.getElementById('store-wrapper');
+
+    deliverySelect.addEventListener('change', () => {
+      if (deliverySelect.value !== '') {
+        storeWrapper.style.display = 'block';
+      } else {
+        storeWrapper.style.display = 'none';
+      }
+    });
+
+    document.getElementById('checkout-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      alert('感謝您的訂購！(示意畫面)');
+    });
+  </script>
+</body>
+</html>
