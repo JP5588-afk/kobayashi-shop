@@ -144,6 +144,7 @@
   </div>
   <script>
     const products = [
+      { name: '玫瑰花茶', price: 50, category: 'daily', image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=300&q=80' },
       { name: '可愛娃娃1號', price: 299, category: 'dolls' },
       { name: '東京限定餅乾', price: 180, category: 'snacks' },
       { name: '和風抹茶糖', price: 150, category: 'snacks' },
@@ -170,7 +171,11 @@
       for (const [index, p] of items.entries()) {
         const div = document.createElement('div');
         div.className = 'product';
-        div.innerHTML = `<img src="https://via.placeholder.com/150" alt="產品"><h3>${p.name}</h3><p>$${p.price}</p>`;
+        div.innerHTML = `
+          <img src="${p.image || 'https://via.placeholder.com/150'}" alt="產品">
+          <h3>${p.name}</h3>
+          <p>$${p.price}</p>
+        `;
         div.onclick = () => alert(`${p.name} 詳細頁功能未完成`);
         grid.appendChild(div);
       }
