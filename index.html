@@ -79,6 +79,16 @@
       margin-top: 20px;
       cursor: pointer;
     }
+    select, button {
+      margin: 10px;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #ffd1dc;
+    }
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -102,6 +112,14 @@
       text-align: center;
       margin: 20px;
     }
+    #product-detail {
+      display: none;
+      padding: 20px;
+      background: white;
+      margin: 20px;
+      border-radius: 10px;
+      text-align: center;
+    }
     #checkout-page {
       display: none;
       max-width: 800px;
@@ -111,41 +129,9 @@
       border-radius: 20px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.06);
     }
-    #checkout-page input, #checkout-page select {
-      width: 100%;
-      margin: 8px 0;
-      padding: 8px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-    }
-    .cart-summary {
-      margin-bottom: 20px;
-    }
-    .cart-summary .item {
-      display: flex;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-    .cart-summary img {
-      width: 60px;
-      height: auto;
-      margin-right: 10px;
-      border-radius: 10px;
-    }
-    .cart-summary .info {
-      flex-grow: 1;
-    }
-    .cart-summary select {
-      width: auto;
-      margin-left: 10px;
-    }
     @media (max-width: 600px) {
       .grid {
         grid-template-columns: repeat(2, 1fr);
-      }
-      .sidebar {
-        width: 80%;
-        max-width: 240px;
       }
     }
   </style>
@@ -168,32 +154,122 @@
     <button class="back-button" onclick="toggleSidebar()">← 返回</button>
   </div>
 
-  <div class="grid" id="product-list">
-    <div class="product">
-      <img src="https://via.placeholder.com/150" alt="可愛娃娃1號">
-      <div>可愛娃娃1號</div>
-      <div style="color:#d63384; font-weight:bold;">$299</div>
-    </div>
-    <div class="product">
-      <img src="https://via.placeholder.com/150" alt="東京限定餅乾">
-      <div>東京限定餅乾</div>
-      <div style="color:#d63384; font-weight:bold;">$180</div>
-    </div>
-  </div>
-
-  <div class="pagination" id="pagination"></div>
+  <div class="grid" id="product-list"></div>
+  <div id="product-detail"></div>
   <div id="checkout-page"></div>
 
   <script>
+    const products = [
+      { id: 1, name: "可愛娃娃1號", price: 299, image: "https://via.placeholder.com/150" },
+      { id: 2, name: "東京限定餅乾", price: 180, image: "https://via.placeholder.com/150" }
+    ];
+
+    let cart = [];
+
     function toggleSidebar() {
       document.getElementById("sidebar").classList.toggle("active");
     }
+
+    function renderProducts() {
+      const list = document.getElementById("product-list");
+      list.innerHTML = "";
+      products.forEach(p => {
+        const item = document.createElement("div");
+        item.className = "product";
+        item.innerHTML = `
+          <img src="${p.image}" alt="${p.name}" />
+          <div>${p.name}</div>
+          <div style="color:#d63384; font-weight:bold;">$${p.price}</div>
+        `;
+        item.onclick = () => showDetail(p.id);
+        list.appendChild(item);
+      });
+    }
+
+    function showDetail(id) {
+      const p = products.find(x => x.id === id);
+      const detail = document.getElementById("product-detail");
+      detail.innerHTML = `
+        <h2>${p.name}</h2>
+        <img src="${p.image}" style="width:150px; border-radius:10px;" />
+        <p>這是一項精美商品的說明。</p>
+        <p><strong>$${p.price}</strong></p>
+        <label>數量：</label>
+        <select id="qty">
+          ${[...Array(10).keys()].map(i => `<option>${i+1}</option>`).join('')}
+        </select>
+        <button onclick="addToCart(${id})">加入購物車</button>
+      `;
+      detail.style.display = "block";
+      document.getElementById("product-list").style.display = "none";
+    }
+
+    function addToCart(id) {
+      const qty = parseInt(document.getElementById("qty").value);
+      const existing = cart.find(x => x.id === id);
+      if (existing) {
+        existing.qty += qty;
+      } else {
+        const p = products.find(x => x.id === id);
+        cart.push({ ...p, qty });
+      }
+      updateCartCount();
+      alert("已加入購物車");
+    }
+
+    function updateCartCount() {
+      document.getElementById("cart-count").innerText = cart.reduce((a, b) => a + b.qty, 0);
+    }
+
     function goToCart() {
-      alert("跳轉購物車功能尚未實作");
+      const page = document.getElementById("checkout-page");
+      page.innerHTML = `
+        <h2>購物車</h2>
+        ${cart.map(c => `
+          <div style="margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:10px;">
+            <img src="${c.image}" style="width:80px; vertical-align:middle; border-radius:8px;" />
+            <strong>${c.name}</strong> x 
+            <select onchange="updateQty(${c.id}, this.value)">
+              ${[...Array(10).keys()].map(i => `<option value="${i+1}" ${c.qty==i+1?'selected':''}>${i+1}</option>`).join('')}
+            </select>
+            <span style="color:#d63384"> $${c.price * c.qty}</span>
+          </div>
+        `).join('')}
+        <button onclick="checkout()">確定下單</button>
+      `;
+      page.style.display = "block";
+      document.getElementById("product-list").style.display = "none";
+      document.getElementById("product-detail").style.display = "none";
     }
-    function filterProducts(type) {
-      alert("分類功能尚未實作: " + type);
+
+    function updateQty(id, qty) {
+      const item = cart.find(c => c.id === id);
+      if (item) {
+        item.qty = parseInt(qty);
+        goToCart();
+      }
+      updateCartCount();
     }
+
+    function checkout() {
+      const page = document.getElementById("checkout-page");
+      page.innerHTML = `
+        <h2>結帳資訊</h2>
+        <label>姓名：<input type="text" style="margin:5px"></label><br>
+        <label>電話：<input type="text" style="margin:5px"></label><br>
+        <label>地址：<input type="text" style="margin:5px"></label><br>
+        <label>取貨方式：
+          <select>
+            <option>超商</option>
+            <option>蝦皮店到店</option>
+            <option>貨到付款</option>
+          </select>
+        </label><br>
+        <button onclick="alert('訂單已送出')">送出訂單</button>
+      `;
+    }
+
+    renderProducts();
   </script>
 </body>
 </html>
