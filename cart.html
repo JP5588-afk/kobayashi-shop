@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>購物車</title>
   <style>
     body {
@@ -23,94 +23,111 @@
       text-align: center;
       color: #d63384;
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
+    .cart-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px;
+      border-bottom: 1px solid #ffe0f0;
     }
-    th, td {
-      border: 1px solid #ffc0cb;
-      padding: 12px;
-      text-align: center;
+    .cart-item img {
+      width: 50px;
+      height: 50px;
+      border-radius: 8px;
+      margin-right: 15px;
     }
-    th {
-      background-color: #fff0f5;
-      color: #d63384;
+    .item-info {
+      display: flex;
+      align-items: center;
+      flex: 1;
     }
-    .btn {
+    .item-name {
+      min-width: 120px;
+      font-weight: bold;
+    }
+    select {
+      padding: 5px;
+      border-radius: 8px;
+      margin: 0 10px;
+    }
+    .price {
+      width: 80px;
+      text-align: right;
+    }
+    .remove-btn {
       background-color: #ff69b4;
       color: white;
       border: none;
-      padding: 10px 20px;
-      font-size: 16px;
-      border-radius: 12px;
+      padding: 6px 10px;
+      border-radius: 8px;
       cursor: pointer;
-      transition: background 0.3s;
-      margin-top: 20px;
     }
-    .btn:hover {
+    .remove-btn:hover {
       background-color: #ff92c2;
     }
     .total {
       text-align: right;
-      margin-top: 20px;
       font-weight: bold;
       font-size: 18px;
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h2>購物車</h2>
-    <table id="cart-table">
-      <thead>
-        <tr>
-          <th>商品名稱</th>
-          <th>數量</th>
-          <th>價格</th>
-          <th>操作</th>
-        </tr>
-      </thead>
-      <tbody id="cart-body"></tbody>
-    </table>
-    <div class="total" id="total">總金額：$0</div>
-    <div style="text-align: center;">
-      <button class="btn" onclick="location.href='checkout.html'">前往結帳</button>
-    </div>
+    <div id="cart-container"></div>
+    <div class="total" id="total-price"></div>
   </div>
 
   <script>
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    const cartBody = document.getElementById('cart-body');
-    const totalDisplay = document.getElementById('total');
-    let total = 0;
+    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+    const cartContainer = document.getElementById("cart-container");
+    const totalPriceEl = document.getElementById("total-price");
 
     function renderCart() {
-      cartBody.innerHTML = '';
-      total = 0;
+      cartContainer.innerHTML = "";
+      let total = 0;
 
       if (cart.length === 0) {
-        cartBody.innerHTML = '<tr><td colspan="4">購物車是空的</td></tr>';
-      } else {
-        cart.forEach((item, index) => {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-            <td>${item.name}</td>
-            <td>${item.quantity}</td>
-            <td>$${item.price * item.quantity}</td>
-            <td><button onclick="removeItem(${index})">刪除</button></td>
-          `;
-          cartBody.appendChild(row);
-          total += item.price * item.quantity;
-        });
+        cartContainer.innerHTML = "<p style='text-align:center;'>購物車是空的。</p>";
+        totalPriceEl.textContent = "";
+        return;
       }
 
-      totalDisplay.textContent = `總金額：$${total}`;
+      cart.forEach((item, index) => {
+        const itemTotal = item.price * item.quantity;
+        total += itemTotal;
+
+        const div = document.createElement("div");
+        div.className = "cart-item";
+        div.innerHTML = `
+          <div class="item-info">
+            <img src="https://via.placeholder.com/50" alt="商品圖片">
+            <div class="item-name">${item.name}</div>
+            <select onchange="updateQuantity(${index}, this.value)">
+              ${[...Array(10).keys()].map(i => `<option value="${i+1}" ${item.quantity === i+1 ? "selected" : ""}>${i+1}</option>`).join("")}
+            </select>
+            <div class="price">$${itemTotal}</div>
+          </div>
+          <button class="remove-btn" onclick="removeItem(${index})">刪除</button>
+        `;
+
+        cartContainer.appendChild(div);
+      });
+
+      totalPriceEl.textContent = `總金額：$${total}`;
+    }
+
+    function updateQuantity(index, value) {
+      cart[index].quantity = parseInt(value);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      renderCart();
     }
 
     function removeItem(index) {
       cart.splice(index, 1);
-      localStorage.setItem('cart', JSON.stringify(cart));
+      localStorage.setItem("cart", JSON.stringify(cart));
       renderCart();
     }
 
