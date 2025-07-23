@@ -137,6 +137,13 @@
       display: none;
       margin: 10px;
     }
+    .payment-app-link {
+      display: none;
+      margin-left: 10px;
+      color: #007bff;
+      text-decoration: underline;
+      cursor: pointer;
+    }
     @media (min-width: 600px) {
       .grid {
         grid-template-columns: repeat(3, 1fr);
@@ -161,11 +168,41 @@
     <button class="back-button">← 返回</button>
   </div>
   <div class="grid">
-    <!-- 商品格子將在這裡顯示 -->
+    <div class="product">
+      <img src="https://via.placeholder.com/150" alt="產品1">
+      <h3>可愛娃娃1號</h3>
+      <p>$299</p>
+    </div>
+    <div class="product">
+      <img src="https://via.placeholder.com/150" alt="產品2">
+      <h3>東京限定餅乾</h3>
+      <p>$180</p>
+    </div>
+    <div class="product">
+      <img src="https://via.placeholder.com/150" alt="產品3">
+      <h3>和風抹茶糖</h3>
+      <p>$150</p>
+    </div>
+    <div class="product">
+      <img src="https://via.placeholder.com/150" alt="產品4">
+      <h3>櫻花吊飾</h3>
+      <p>$120</p>
+    </div>
+    <div class="product">
+      <img src="https://via.placeholder.com/150" alt="產品5">
+      <h3>日式文具組</h3>
+      <p>$250</p>
+    </div>
+    <div class="product">
+      <img src="https://via.placeholder.com/150" alt="產品6">
+      <h3>拉麵鑰匙圈</h3>
+      <p>$199</p>
+    </div>
   </div>
-  <div id="product-detail">
-    <!-- 單一商品詳細資訊 -->
+  <div class="pagination">
+    <button class="back-button">下一頁</button>
   </div>
+  <div id="product-detail"></div>
   <div id="checkout-page">
     <h2>結帳資訊</h2>
     <label>姓名：<input type="text" name="name" /></label><br>
@@ -183,23 +220,24 @@
     </label><br>
     <label class="store-info-input" id="store-info">門市名稱：<input type="text" name="store-name" /></label><br>
     <label>付款方式：
-      <select name="payment-method">
+      <select name="payment-method" onchange="togglePaymentApp(this.value)">
         <option value="bank">轉帳</option>
         <option value="linepay">全支付</option>
         <option value="jkopay">街口支付</option>
         <option value="cod">貨到付款</option>
       </select>
-    </label><br>
+    </label>
+    <span class="payment-app-link" id="pay-app-link" onclick="alert('這是支付連結範例')">開啟支付 App</span><br>
     <button type="submit">送出訂單</button>
   </div>
   <script>
     function toggleStoreInput(value) {
       const storeInput = document.getElementById('store-info');
-      if (value && value !== '貨到付款') {
-        storeInput.style.display = 'block';
-      } else {
-        storeInput.style.display = 'none';
-      }
+      storeInput.style.display = (value && value !== '貨到付款') ? 'block' : 'none';
+    }
+    function togglePaymentApp(value) {
+      const appLink = document.getElementById('pay-app-link');
+      appLink.style.display = (value === 'linepay' || value === 'jkopay') ? 'inline' : 'none';
     }
   </script>
 </body>
