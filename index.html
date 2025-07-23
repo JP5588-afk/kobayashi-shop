@@ -79,7 +79,7 @@
       margin-top: 20px;
       cursor: pointer;
     }
-    select, button, input[type="text"] {
+    select, button, input[type="text"], input[type="tel"] {
       margin: 10px;
       padding: 8px;
       border-radius: 8px;
@@ -129,6 +129,14 @@
       border-radius: 20px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.06);
     }
+    .payment-select {
+      display: block;
+      margin: 10px;
+    }
+    .store-info-input {
+      display: none;
+      margin: 10px;
+    }
     @media (min-width: 600px) {
       .grid {
         grid-template-columns: repeat(3, 1fr);
@@ -137,6 +145,62 @@
   </style>
 </head>
 <body>
-  <!-- unchanged content above -->
+  <header>
+    <div class="menu-icon">☰</div>
+    <h1>小林日貨鋪</h1>
+    <div class="cart-icon">🛒<span>0</span></div>
+  </header>
+  <div class="sidebar">
+    <h3>分類</h3>
+    <ul>
+      <li>全部商品</li>
+      <li>日本零食</li>
+      <li>可愛娃娃</li>
+      <li>生活雜貨</li>
+    </ul>
+    <button class="back-button">← 返回</button>
+  </div>
+  <div class="grid">
+    <!-- 商品格子將在這裡顯示 -->
+  </div>
+  <div id="product-detail">
+    <!-- 單一商品詳細資訊 -->
+  </div>
+  <div id="checkout-page">
+    <h2>結帳資訊</h2>
+    <label>姓名：<input type="text" name="name" /></label><br>
+    <label>電話：<input type="tel" name="phone" /></label><br>
+    <label>取貨方式：
+      <select name="pickup-method" onchange="toggleStoreInput(this.value)">
+        <option value="">請選擇</option>
+        <option value="7-11">7-11</option>
+        <option value="全家">全家</option>
+        <option value="萊爾富">萊爾富</option>
+        <option value="OK超商">OK超商</option>
+        <option value="蝦皮店到店">蝦皮店到店</option>
+        <option value="貨到付款">貨到付款</option>
+      </select>
+    </label><br>
+    <label class="store-info-input" id="store-info">門市名稱：<input type="text" name="store-name" /></label><br>
+    <label>付款方式：
+      <select name="payment-method">
+        <option value="bank">轉帳</option>
+        <option value="linepay">全支付</option>
+        <option value="jkopay">街口支付</option>
+        <option value="cod">貨到付款</option>
+      </select>
+    </label><br>
+    <button type="submit">送出訂單</button>
+  </div>
+  <script>
+    function toggleStoreInput(value) {
+      const storeInput = document.getElementById('store-info');
+      if (value && value !== '貨到付款') {
+        storeInput.style.display = 'block';
+      } else {
+        storeInput.style.display = 'none';
+      }
+    }
+  </script>
 </body>
 </html>
