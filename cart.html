@@ -1,140 +1,194 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>購物車</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>商品詳情</title>
   <style>
     body {
       font-family: "Segoe UI", "Helvetica Neue", sans-serif;
       background-color: #fff1f7;
       padding: 20px;
     }
-    .cart-container {
-      max-width: 700px;
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #ffb6c1;
+      padding: 10px 20px;
+      margin: -20px -20px 20px;
+    }
+    header h1 {
+      font-size: 20px;
+      color: white;
+      margin: 0;
+    }
+    .cart-icon {
+      position: relative;
+      font-size: 20px;
+      cursor: pointer;
+      color: white;
+    }
+    .cart-icon span {
+      position: absolute;
+      top: -8px;
+      right: -10px;
+      background: red;
+      color: white;
+      border-radius: 50%;
+      padding: 2px 6px;
+      font-size: 12px;
+    }
+    .back-arrow {
+      font-size: 20px;
+      color: white;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    .container {
+      max-width: 400px;
       margin: auto;
       background: white;
       padding: 20px;
       border-radius: 12px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    img {
+      width: 60%;
+      border-radius: 12px;
+      margin-bottom: 10px;
     }
     h2 {
+      margin-top: 10px;
       color: #d63384;
-      margin-bottom: 20px;
     }
-    .cart-item {
-      display: flex;
-      align-items: center;
-      border-bottom: 1px solid #eee;
-      padding: 10px 0;
-    }
-    .cart-item img {
-      width: 60px;
-      height: 60px;
-      object-fit: cover;
-      border-radius: 6px;
-      margin-right: 10px;
-    }
-    .item-info {
-      flex-grow: 1;
-    }
-    .item-info p {
-      margin: 4px 0;
-    }
-    .item-qty {
-      margin-right: 10px;
-    }
-    .item-total {
-      font-weight: bold;
-      color: #d63384;
+    .price {
+      font-size: 20px;
+      margin: 10px 0;
     }
     .btn {
       background: #ff69b4;
       color: white;
       border: none;
-      padding: 8px 14px;
-      border-radius: 6px;
+      padding: 10px 20px;
+      margin: 10px 5px 0;
+      border-radius: 8px;
       cursor: pointer;
     }
     .btn:hover {
       background: #ff92c2;
     }
-    .total-price {
-      text-align: right;
-      margin-top: 20px;
-      font-size: 20px;
-      font-weight: bold;
-      color: #d63384;
+    label, select {
+      font-size: 16px;
+      margin: 10px 0;
+      display: block;
     }
-    .actions {
-      text-align: right;
-      margin-top: 10px;
+    select {
+      padding: 6px;
+      border-radius: 6px;
+      margin: 0 auto 20px;
+    }
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    .service-icon {
+      width: 24px;
+      height: 24px;
+      filter: invert(1);
     }
   </style>
 </head>
 <body>
-  <div class="cart-container">
-    <h2>購物車</h2>
-    <div id="cart-items"></div>
-    <div class="total-price" id="total-price">總金額：$0</div>
-    <div class="actions">
-      <button class="btn" onclick="checkout()">下單</button>
+  <header>
+    <div style="display: flex; align-items: center;">
+      <div class="back-arrow" onclick="history.back()">←</div>
+      <h1>小林日貨鋪</h1>
+    </div>
+    <div class="cart-icon" onclick="window.location.href='service.html'">
+      <img src="service-icon.png" class="service-icon" alt="客服">
+      <span id="cart-count">0</span>
+    </div>
+  </header>
+  <div class="container">
+    <img id="product-img" src="" alt="商品圖片">
+    <h2 id="product-name"></h2>
+    <p class="price" id="product-price"></p>
+
+    <label for="quantity">數量：</label>
+    <select id="quantity"></select>
+
+    <div class="button-group">
+      <button class="btn" onclick="addToCart()">加入購物車</button>
+      <button class="btn" onclick="history.back()">← 返回</button>
     </div>
   </div>
 
   <script>
-    function renderCart() {
-      const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
-      const cartDiv = document.getElementById("cart-items");
-      const totalPriceEl = document.getElementById("total-price");
-      cartDiv.innerHTML = "";
-      let total = 0;
+    const params = new URLSearchParams(window.location.search);
+    const id = parseInt(params.get("id"));
+    let products;
 
-      cartItems.forEach((item, index) => {
-        const itemTotal = item.price * item.quantity;
-        total += itemTotal;
-
-        const div = document.createElement("div");
-        div.className = "cart-item";
-        div.innerHTML = `
-          <img src="${item.image || 'https://via.placeholder.com/60'}" alt="商品圖片">
-          <div class="item-info">
-            <p><strong>${item.name}</strong></p>
-            <p>$${item.price}</p>
-          </div>
-          <select class="item-qty" onchange="updateQty(${index}, this.value)">
-            ${Array.from({length: 10}, (_, i) => `<option value="${i+1}" ${item.quantity === i+1 ? 'selected' : ''}>${i+1}</option>`).join("")}
-          </select>
-          <div class="item-total">$${itemTotal}</div>
-          <button class="btn" onclick="removeItem(${index})">刪除</button>
-        `;
-        cartDiv.appendChild(div);
-      });
-
-      totalPriceEl.textContent = `總金額：$${total}`;
+    if (localStorage.getItem("products")) {
+      products = JSON.parse(localStorage.getItem("products"));
+    } else {
+      products = [
+        {
+          id: 1,
+          name: "玫瑰花茶",
+          price: 50,
+          image: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=300&q=80"
+        },
+        {
+          id: 2,
+          name: "北海道牛奶糖",
+          price: 110,
+          image: "https://images.unsplash.com/photo-1572569511254-d8f62f7d6b25?auto=format&fit=crop&w=300&q=80"
+        }
+      ];
+      localStorage.setItem("products", JSON.stringify(products));
     }
 
-    function updateQty(index, qty) {
-      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-      cart[index].quantity = parseInt(qty);
+    const product = products.find(p => p.id === id);
+
+    if (product) {
+      document.getElementById("product-img").src = product.image || "https://via.placeholder.com/300";
+      document.getElementById("product-name").textContent = product.name;
+      document.getElementById("product-price").textContent = `$${product.price}`;
+
+      const quantitySelect = document.getElementById("quantity");
+      for (let i = 1; i <= 10; i++) {
+        const option = document.createElement("option");
+        option.value = i;
+        option.textContent = i;
+        quantitySelect.appendChild(option);
+      }
+    }
+
+    function addToCart() {
+      const quantity = parseInt(document.getElementById("quantity").value);
+      if (!product || quantity <= 0) return;
+      let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      const index = cart.findIndex(i => i.id === product.id);
+      if (index >= 0) {
+        cart[index].quantity += quantity;
+      } else {
+        cart.push({ ...product, quantity });
+      }
       localStorage.setItem("cart", JSON.stringify(cart));
-      renderCart();
+      updateCartCount();
+      alert("已加入購物車！");
     }
 
-    function removeItem(index) {
+    function updateCartCount() {
       const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-      cart.splice(index, 1);
-      localStorage.setItem("cart", JSON.stringify(cart));
-      renderCart();
+      const total = cart.reduce((sum, item) => sum + item.quantity, 0);
+      document.getElementById("cart-count").textContent = total;
     }
 
-    function checkout() {
-      alert("已送出訂單！");
-      localStorage.removeItem("cart");
-      renderCart();
-    }
-
-    window.onload = renderCart;
+    updateCartCount();
   </script>
 </body>
 </html>
