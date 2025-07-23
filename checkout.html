@@ -1,18 +1,28 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>結帳頁面</title>
   <style>
     body {
-      font-family: "Segoe UI", sans-serif;
+      font-family: "Segoe UI", "Helvetica Neue", sans-serif;
       background-color: #fff1f7;
       margin: 0;
-      padding: 20px;
+      padding: 0;
+      overflow-x: hidden;
+    }
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
     h2 {
-      color: #333;
+      text-align: center;
+      color: #d63384;
     }
     label {
       display: block;
@@ -22,81 +32,64 @@
     input, select {
       width: 100%;
       padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 16px;
       margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
     }
-    .store-input {
-      display: none;
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 30px;
     }
-    .submit-btn {
+    .btn {
       background-color: #ff69b4;
       color: white;
       border: none;
       padding: 10px 20px;
       font-size: 16px;
-      border-radius: 10px;
-      margin-top: 20px;
+      border-radius: 12px;
       cursor: pointer;
+      transition: background 0.3s;
     }
-    .submit-btn:hover {
-      background-color: #ff85c1;
+    .btn:hover {
+      background-color: #ff92c2;
     }
   </style>
 </head>
 <body>
-  <h2>結帳資訊</h2>
-  <form id="checkout-form">
-    <label for="name">姓名：</label>
-    <input type="text" id="name" required>
+  <div class="container">
+    <h2>結帳資訊</h2>
+    <form>
+      <label for="name">姓名：</label>
+      <input type="text" id="name" required>
 
-    <label for="phone">電話：</label>
-    <input type="tel" id="phone" required>
+      <label for="phone">電話：</label>
+      <input type="tel" id="phone" required>
 
-    <label for="payment">付款方式：</label>
-    <select id="payment" required>
-      <option value="">請選擇</option>
-      <option value="轉帳">轉帳</option>
-      <option value="全支付">全支付</option>
-      <option value="街口支付">街口支付</option>
-      <option value="貨到付款">貨到付款</option>
-    </select>
+      <label for="payment">付款方式：</label>
+      <select id="payment" required>
+        <option value="">請選擇</option>
+        <option value="atm">轉帳</option>
+        <option value="allpay">全支付</option>
+        <option value="jkpay">街口支付</option>
+        <option value="cod">貨到付款</option>
+      </select>
 
-    <label for="delivery">取貨方式：</label>
-    <select id="delivery" required>
-      <option value="">請選擇</option>
-      <option value="711">7-11</option>
-      <option value="全家">全家</option>
-      <option value="萊爾富">萊爾富</option>
-      <option value="OK">OK</option>
-      <option value="蝦皮店到店">蝦皮店到店</option>
-    </select>
+      <label for="pickup">取貨方式：</label>
+      <select id="pickup" required>
+        <option value="">請選擇</option>
+        <option value="store">蝦皮店到店</option>
+        <option value="711">7-11超商</option>
+        <option value="family">全家超商</option>
+      </select>
 
-    <div id="store-wrapper" class="store-input">
-      <label for="store">門市名稱：</label>
-      <input type="text" id="store" placeholder="請輸入取貨門市">
-    </div>
-
-    <button class="submit-btn" type="submit">送出訂單</button>
-  </form>
-
-  <script>
-    const deliverySelect = document.getElementById('delivery');
-    const storeWrapper = document.getElementById('store-wrapper');
-
-    deliverySelect.addEventListener('change', () => {
-      if (deliverySelect.value !== '') {
-        storeWrapper.style.display = 'block';
-      } else {
-        storeWrapper.style.display = 'none';
-      }
-    });
-
-    document.getElementById('checkout-form').addEventListener('submit', function (e) {
-      e.preventDefault();
-      alert('感謝您的訂購！(示意畫面)');
-    });
-  </script>
+      <div class="button-group">
+        <button type="submit" class="btn">送出訂單</button>
+        <button type="button" class="btn" onclick="window.location.href='index.html'">取消</button>
+      </div>
+    </form>
+  </div>
 </body>
 </html>
