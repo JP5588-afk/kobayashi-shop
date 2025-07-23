@@ -180,9 +180,20 @@
       document.getElementById('orderItems').value = cart.map(i => `${i.name} x ${i.quantity}`).join(', ');
       document.getElementById('totalAmount').value = total;
 
-      this.submit(); // 手動提交
-      localStorage.removeItem('cart');
+      // 送出資料
+      fetch(this.action, {
+        method: 'POST',
+        body: new FormData(this),
+        headers: { 'Accept': 'application/json' }
+      }).then(() => {
+        localStorage.removeItem('cart'); // 清除購物車
+        // 跳轉付款測試頁
+        window.location.href = 'https://example.com';
+      }).catch(() => {
+        alert('訂單送出失敗，請稍後再試');
+      });
     });
   </script>
 </body>
 </html>
+
