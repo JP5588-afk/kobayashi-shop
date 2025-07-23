@@ -94,6 +94,11 @@
       justify-content: center;
       gap: 10px;
     }
+    .service-icon {
+      width: 24px;
+      height: 24px;
+      filter: invert(1);
+    }
   </style>
 </head>
 <body>
@@ -102,8 +107,9 @@
       <div class="back-arrow" onclick="history.back()">←</div>
       <h1>小林日貨鋪</h1>
     </div>
-    <div class="cart-icon" onclick="window.location.href='cart.html'">
-      🛒<span id="cart-count">0</span>
+    <div class="cart-icon" onclick="window.location.href='service.html'">
+      <img src="service-icon.png" class="service-icon" alt="客服">
+      <span id="cart-count">0</span>
     </div>
   </header>
   <div class="container">
