@@ -12,7 +12,6 @@
       padding: 0;
       overflow-x: hidden;
     }
-
     .container {
       max-width: 600px;
       margin: 40px auto;
@@ -21,30 +20,16 @@
       border-radius: 12px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
-
     h2 {
       text-align: center;
       color: #d63384;
     }
-
     label {
       display: block;
       margin-top: 15px;
       font-weight: bold;
     }
-
-    input {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 16px;
-      appearance: none;
-      background-color: #fff;
-    }
-
-    select {
+    input, select {
       width: 100%;
       padding: 10px;
       margin-top: 5px;
@@ -58,14 +43,15 @@
       background-position: right 10px center;
       background-size: 10px;
     }
-
+    .store-input input {
+      background-image: none;
+    }
     .button-group {
       display: flex;
       justify-content: center;
       gap: 20px;
       margin-top: 30px;
     }
-
     .btn {
       background-color: #ff69b4;
       color: white;
@@ -76,11 +62,9 @@
       cursor: pointer;
       transition: background 0.3s;
     }
-
     .btn:hover {
       background-color: #ff92c2;
     }
-
     #order-summary {
       background-color: #fff8fb;
       padding: 15px;
@@ -88,28 +72,23 @@
       margin-top: 20px;
       border: 1px solid #ffd0e1;
     }
-
     #order-summary h3 {
       margin-top: 0;
       color: #d63384;
     }
-
     #order-summary ul {
       list-style: none;
       padding-left: 0;
     }
-
     #order-summary ul li {
       padding: 6px 0;
       border-bottom: 1px dashed #ffc0cb;
     }
-
     #total {
       text-align: right;
       font-weight: bold;
       margin-top: 10px;
     }
-
     .store-input {
       display: none;
       margin-top: 10px;
@@ -166,7 +145,7 @@
     const summaryList = document.getElementById('summary-list');
     const totalDisplay = document.getElementById('total');
     const pickup = document.getElementById('pickup');
-    const storeInput = document.getElementById('store-name');
+    const storeInputDiv = document.getElementById('store-name');
 
     let total = 0;
 
@@ -184,12 +163,51 @@
 
     pickup.addEventListener('change', function () {
       if (this.value) {
-        storeInput.style.display = 'block';
+        storeInputDiv.style.display = 'block';
       } else {
-        storeInput.style.display = 'none';
+        storeInputDiv.style.display = 'none';
       }
+    });
+
+    document.getElementById('checkout-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value;
+      const phone = document.getElementById('phone').value;
+      const payment = document.getElementById('payment').value;
+      const pickup = document.getElementById('pickup').value;
+      const storeName = document.getElementById('storeInput')?.value || "";
+
+      const items = cart.map(i => i.name);
+      const quantities = cart.map(i => i.quantity);
+
+      fetch('https://script.google.com/macros/s/AKfycbxEZKryBQYtCDLOkUVRzH4T_9obSi9Y0N3q3DPkOyHT6gu9vhH55CMuklDZvN2EvxixKw/exec', {
+        method: 'POST',
+        body: JSON.stringify({
+          name,
+          phone,
+          payment,
+          pickup,
+          storeName,
+          items,
+          quantities,
+          total
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert("訂單送出成功！");
+        localStorage.removeItem('cart');
+        window.location.href = 'index.html';
+      })
+      .catch(err => {
+        console.error("訂單送出失敗", err);
+        alert("送出失敗，請稍後再試");
+      });
     });
   </script>
 </body>
 </html>
-
