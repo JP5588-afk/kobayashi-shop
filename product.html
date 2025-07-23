@@ -17,6 +17,7 @@
       padding: 20px;
       border-radius: 12px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      text-align: center;
     }
     img {
       width: 100%;
@@ -35,7 +36,7 @@
       color: white;
       border: none;
       padding: 10px 20px;
-      margin-right: 10px;
+      margin: 10px 5px;
       border-radius: 8px;
       cursor: pointer;
     }
@@ -45,11 +46,16 @@
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="container" id="detail">
     <img id="product-img" src="" alt="商品圖片">
     <h2 id="product-name"></h2>
     <p class="price" id="product-price"></p>
     <button class="btn" onclick="addToCart()">加入購物車</button>
+    <button class="btn" onclick="history.back()">← 返回</button>
+  </div>
+
+  <div class="container" id="not-found" style="display:none;">
+    <h2>找不到此商品 😢</h2>
     <button class="btn" onclick="history.back()">← 返回</button>
   </div>
 
@@ -60,12 +66,16 @@
     const product = products.find(p => p.id === id);
 
     if (product) {
-      document.getElementById("product-img").src = product.image;
+      document.getElementById("product-img").src = product.image || "https://via.placeholder.com/300x200?text=No+Image";
       document.getElementById("product-name").textContent = product.name;
       document.getElementById("product-price").textContent = `$${product.price}`;
+    } else {
+      document.getElementById("detail").style.display = "none";
+      document.getElementById("not-found").style.display = "block";
     }
 
     function addToCart() {
+      if (!product) return;
       let cart = JSON.parse(localStorage.getItem("cart") || "[]");
       const index = cart.findIndex(i => i.id === product.id);
       if (index >= 0) {
