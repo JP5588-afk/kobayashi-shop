@@ -1,147 +1,107 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>購物車</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>商品詳情</title>
   <style>
     body {
       font-family: "Segoe UI", "Helvetica Neue", sans-serif;
       background-color: #fff1f7;
-      margin: 0;
-      padding: 0;
+      padding: 20px;
     }
     .container {
       max-width: 600px;
-      margin: 40px auto;
-      background: #fff;
-      padding: 30px;
+      margin: auto;
+      background: white;
+      padding: 20px;
       border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    img {
+      width: 100%;
+      border-radius: 12px;
     }
     h2 {
-      text-align: center;
+      margin-top: 10px;
       color: #d63384;
-      margin-bottom: 20px;
-    }
-    .cart-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 15px 0;
-      border-bottom: 1px solid #ffe0f0;
-    }
-    .cart-item img {
-      width: 60px;
-      height: 60px;
-      border-radius: 8px;
-      object-fit: cover;
-      margin-right: 15px;
-    }
-    .item-info {
-      display: flex;
-      align-items: center;
-      flex: 1;
-      gap: 15px;
-    }
-    .item-name {
-      min-width: 140px;
-      font-weight: 600;
-      color: #d63384;
-    }
-    select {
-      padding: 6px 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 14px;
-      width: 60px;
-      cursor: pointer;
     }
     .price {
-      width: 80px;
-      text-align: right;
-      font-weight: bold;
-      color: #ff69b4;
+      font-size: 20px;
+      margin: 10px 0;
     }
-    .remove-btn {
-      background-color: #ff69b4;
+    .btn {
+      background: #ff69b4;
       color: white;
       border: none;
-      padding: 6px 14px;
-      border-radius: 12px;
+      padding: 10px 20px;
+      margin-right: 10px;
+      border-radius: 8px;
       cursor: pointer;
-      transition: background-color 0.3s ease;
-      margin-left: 15px;
     }
-    .remove-btn:hover {
-      background-color: #ff92c2;
+    .btn:hover {
+      background: #ff92c2;
     }
-    .total {
-      text-align: right;
-      font-weight: bold;
-      font-size: 20px;
-      color: #d63384;
-      margin-top: 30px;
+    label, select {
+      font-size: 16px;
+      margin: 10px 0;
+      display: block;
+    }
+    select {
+      padding: 6px;
+      border-radius: 6px;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>購物車</h2>
-    <div id="cart-container"></div>
-    <div class="total" id="total-price"></div>
+    <img id="product-img" src="" alt="商品圖片">
+    <h2 id="product-name"></h2>
+    <p class="price" id="product-price"></p>
+
+    <label for="quantity">數量：</label>
+    <select id="quantity">
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+      <option value="7">7</option>
+      <option value="8">8</option>
+      <option value="9">9</option>
+      <option value="10">10</option>
+    </select>
+
+    <button class="btn" onclick="addToCart()">加入購物車</button>
+    <button class="btn" onclick="history.back()">← 返回</button>
   </div>
 
   <script>
-    let cart = JSON.parse(localStorage.getItem("cart") || "[]");
-    const cartContainer = document.getElementById("cart-container");
-    const totalPriceEl = document.getElementById("total-price");
+    const params = new URLSearchParams(window.location.search);
+    const id = parseInt(params.get("id"));
+    const products = JSON.parse(localStorage.getItem("products") || "[]");
+    const product = products.find(p => p.id === id);
 
-    function renderCart() {
-      cartContainer.innerHTML = "";
-      if (cart.length === 0) {
-        cartContainer.innerHTML = "<p style='text-align:center; color:#d63384;'>購物車是空的。</p>";
-        totalPriceEl.textContent = "";
-        return;
+    if (product) {
+      document.getElementById("product-img").src = product.image || "https://via.placeholder.com/300";
+      document.getElementById("product-name").textContent = product.name;
+      document.getElementById("product-price").textContent = `$${product.price}`;
+    }
+
+    function addToCart() {
+      const quantity = parseInt(document.getElementById("quantity").value);
+      if (!product || quantity <= 0) return;
+      let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      const index = cart.findIndex(i => i.id === product.id);
+      if (index >= 0) {
+        cart[index].quantity += quantity;
+      } else {
+        cart.push({ ...product, quantity });
       }
-
-      let total = 0;
-      cart.forEach((item, index) => {
-        const itemTotal = item.price * item.quantity;
-        total += itemTotal;
-
-        const div = document.createElement("div");
-        div.className = "cart-item";
-        div.innerHTML = `
-          <img src="${item.image || 'https://via.placeholder.com/60'}" alt="${item.name}">
-          <div class="item-info">
-            <div class="item-name">${item.name}</div>
-            <select onchange="updateQuantity(${index}, this.value)">
-              ${[...Array(10).keys()].map(i =>
-                `<option value="${i+1}" ${item.quantity === i+1 ? "selected" : ""}>${i+1}</option>`).join("")}
-            </select>
-            <div class="price">$${itemTotal}</div>
-            <button class="remove-btn" onclick="removeItem(${index})">刪除</button>
-          </div>
-        `;
-        cartContainer.appendChild(div);
-      });
-      totalPriceEl.textContent = `總金額：$${total}`;
-    }
-
-    function updateQuantity(index, value) {
-      cart[index].quantity = parseInt(value);
       localStorage.setItem("cart", JSON.stringify(cart));
-      renderCart();
+      alert("已加入購物車！");
     }
-
-    function removeItem(index) {
-      cart.splice(index, 1);
-      localStorage.setItem("cart", JSON.stringify(cart));
-      renderCart();
-    }
-
-    renderCart();
   </script>
 </body>
 </html>
