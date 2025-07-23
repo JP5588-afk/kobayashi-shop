@@ -148,6 +148,29 @@
   </style>
 </head>
 <body>
-<!-- 修正後的版面與邏輯已整合完畢 -->
+  <header>
+    <div class="menu-icon" onclick="toggleSidebar()">☰</div>
+    <h1>小林日貨鋪</h1>
+    <div class="cart-icon" onclick="goToCart()">🛒<span id="cart-count">0</span></div>
+  </header>
+
+  <div class="sidebar" id="sidebar">
+    <h3>分類</h3>
+    <ul>
+      <li onclick="filterProducts('all')">全部商品</li>
+      <li onclick="filterProducts('零食')">日本零食</li>
+      <li onclick="filterProducts('娃娃')">可愛娃娃</li>
+      <li onclick="filterProducts('生活')">生活雜貨</li>
+    </ul>
+    <button class="back-button" onclick="toggleSidebar()">← 返回</button>
+  </div>
+
+  <div class="grid" id="product-list"></div>
+  <div class="pagination" id="pagination"></div>
+  <div id="checkout-page"></div>
+
+  <script>
+    // JS 商品顯示、分類等功能稍後補上
+  </script>
 </body>
 </html>
