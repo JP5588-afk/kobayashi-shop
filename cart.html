@@ -98,15 +98,15 @@
 <body>
   <div class="container">
     <h2>結帳資訊</h2>
-    <form id="checkout-form">
+    <form id="checkout-form" action="https://formspree.io/f/mnnzpgdd" method="POST">
       <label for="name">姓名：</label>
-      <input type="text" id="name" required>
+      <input type="text" id="name" name="name" required>
 
       <label for="phone">電話：</label>
-      <input type="tel" id="phone" required>
+      <input type="tel" id="phone" name="phone" required>
 
       <label for="payment">付款方式：</label>
-      <select id="payment" required>
+      <select id="payment" name="payment" required>
         <option value="">請選擇</option>
         <option value="atm">轉帳</option>
         <option value="allpay">全支付</option>
@@ -115,7 +115,7 @@
       </select>
 
       <label for="pickup">取貨方式：</label>
-      <select id="pickup" required>
+      <select id="pickup" name="pickup" required>
         <option value="">請選擇</option>
         <option value="store">蝦皮店到店</option>
         <option value="711">7-11超商</option>
@@ -124,7 +124,7 @@
 
       <div id="store-name" class="store-input">
         <label for="storeInput">請輸入取貨店名：</label>
-        <input type="text" id="storeInput">
+        <input type="text" id="storeInput" name="storeName">
       </div>
 
       <div id="order-summary">
@@ -132,6 +132,10 @@
         <ul id="summary-list"></ul>
         <div id="total"></div>
       </div>
+
+      <!-- 隱藏欄位：要送給 Formspree -->
+      <input type="hidden" name="orderItems" id="orderItems">
+      <input type="hidden" name="totalAmount" id="totalAmount">
 
       <div class="button-group">
         <button type="submit" class="btn">送出訂單</button>
@@ -172,41 +176,12 @@
     document.getElementById('checkout-form').addEventListener('submit', function (e) {
       e.preventDefault();
 
-      const name = document.getElementById('name').value;
-      const phone = document.getElementById('phone').value;
-      const payment = document.getElementById('payment').value;
-      const pickup = document.getElementById('pickup').value;
-      const storeName = document.getElementById('storeInput')?.value || "";
+      // 寫入隱藏欄位
+      document.getElementById('orderItems').value = cart.map(i => `${i.name} x ${i.quantity}`).join(', ');
+      document.getElementById('totalAmount').value = total;
 
-      const items = cart.map(i => i.name);
-      const quantities = cart.map(i => i.quantity);
-
-      fetch('https://script.google.com/macros/s/AKfycbzL6YsB1XI8jPuwOa64a3SvswSYk5qMI26UHgOvccNrk413T59DIax67xUWdg8ymGRwaQ/exec', {
-        method: 'POST',
-        body: JSON.stringify({
-          name,
-          phone,
-          payment,
-          pickup,
-          storeName,
-          items,
-          quantities,
-          total
-        }),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-      .then(res => res.json())
-      .then(data => {
-        alert("訂單送出成功！");
-        localStorage.removeItem('cart');
-        window.location.href = 'index.html';
-      })
-      .catch(err => {
-        console.error("訂單送出失敗", err);
-        alert("送出失敗，請稍後再試");
-      });
+      this.submit(); // 手動提交
+      localStorage.removeItem('cart');
     });
   </script>
 </body>
