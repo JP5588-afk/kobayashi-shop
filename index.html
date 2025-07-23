@@ -10,6 +10,7 @@
       background-color: #fff1f7;
       margin: 0;
       padding: 0;
+      overflow-x: hidden;
     }
     header {
       display: flex;
@@ -42,10 +43,11 @@
       cursor: pointer;
     }
     .sidebar {
-      position: fixed;
+      position: absolute;
       top: 0;
-      left: -220px;
-      width: 200px;
+      left: -100%;
+      width: 80%;
+      max-width: 240px;
       height: 100%;
       background: #ffe4ec;
       padding: 20px;
@@ -79,7 +81,7 @@
     }
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
       gap: 20px;
       padding: 20px;
     }
@@ -143,6 +145,7 @@
       }
       .sidebar {
         width: 100%;
+        max-width: none;
       }
     }
   </style>
@@ -170,7 +173,15 @@
   <div id="checkout-page"></div>
 
   <script>
-    // JS 商品顯示、分類等功能稍後補上
+    function toggleSidebar() {
+      document.getElementById("sidebar").classList.toggle("active");
+    }
+    function goToCart() {
+      alert("跳轉購物車功能尚未實作");
+    }
+    function filterProducts(type) {
+      alert("分類功能尚未實作: " + type);
+    }
   </script>
 </body>
 </html>
