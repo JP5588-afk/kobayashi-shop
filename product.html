@@ -49,7 +49,7 @@
       text-align: center;
     }
     img {
-      width: 80%;
+      width: 60%;
       border-radius: 12px;
       margin-bottom: 10px;
     }
@@ -83,6 +83,11 @@
       border-radius: 6px;
       margin: 0 auto 20px;
     }
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
   </style>
 </head>
 <body>
@@ -98,39 +103,51 @@
     <p class="price" id="product-price"></p>
 
     <label for="quantity">數量：</label>
-    <select id="quantity">
-      <option value="1">1</option>
-      <option value="2">2</option>
-      <option value="3">3</option>
-      <option value="4">4</option>
-      <option value="5">5</option>
-      <option value="6">6</option>
-      <option value="7">7</option>
-      <option value="8">8</option>
-      <option value="9">9</option>
-      <option value="10">10</option>
-    </select>
+    <select id="quantity"></select>
 
-    <div>
+    <div class="button-group">
       <button class="btn" onclick="addToCart()">加入購物車</button>
       <button class="btn" onclick="history.back()">← 返回</button>
     </div>
   </div>
 
+  <script src="products.js"></script>
   <script>
     const params = new URLSearchParams(window.location.search);
     const id = parseInt(params.get("id"));
-    const products = JSON.parse(localStorage.getItem("products") || "[]");
-    const product = products.find(p => p.id === id);
+    let products = JSON.parse(localStorage.getItem("products") || "[]");
 
-    if (product) {
+    if (!products.length) {
+      fetch('products.json')
+        .then(res => res.json())
+        .then(data => {
+          products = data;
+          localStorage.setItem("products", JSON.stringify(products));
+          showProduct();
+        });
+    } else {
+      showProduct();
+    }
+
+    function showProduct() {
+      const product = products.find(p => p.id === id);
+      if (!product) return;
       document.getElementById("product-img").src = product.image || "https://via.placeholder.com/300";
       document.getElementById("product-name").textContent = product.name;
       document.getElementById("product-price").textContent = `$${product.price}`;
+
+      const quantitySelect = document.getElementById("quantity");
+      for (let i = 1; i <= 10; i++) {
+        const option = document.createElement("option");
+        option.value = i;
+        option.textContent = i;
+        quantitySelect.appendChild(option);
+      }
     }
 
     function addToCart() {
       const quantity = parseInt(document.getElementById("quantity").value);
+      const product = products.find(p => p.id === id);
       if (!product || quantity <= 0) return;
       let cart = JSON.parse(localStorage.getItem("cart") || "[]");
       const index = cart.findIndex(i => i.id === product.id);
