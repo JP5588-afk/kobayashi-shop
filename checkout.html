@@ -36,6 +36,15 @@
       border: 1px solid #ccc;
       border-radius: 8px;
       font-size: 16px;
+      appearance: none;
+      background-color: #fff;
+      background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><path fill="%23d63384" d="M2 0L0 2h4z"/></svg>');
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 10px;
+    }
+    .store-input input {
+      background-image: none;
     }
     .button-group {
       display: flex;
@@ -56,20 +65,48 @@
     .btn:hover {
       background-color: #ff92c2;
     }
+    #order-summary {
+      background-color: #fff8fb;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+      border: 1px solid #ffd0e1;
+    }
+    #order-summary h3 {
+      margin-top: 0;
+      color: #d63384;
+    }
+    #order-summary ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    #order-summary ul li {
+      padding: 6px 0;
+      border-bottom: 1px dashed #ffc0cb;
+    }
+    #total {
+      text-align: right;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    .store-input {
+      display: none;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h2>結帳資訊</h2>
-    <form>
+    <form id="checkout-form" action="https://formspree.io/f/mnnzpgdd" method="POST">
       <label for="name">姓名：</label>
-      <input type="text" id="name" required>
+      <input type="text" id="name" name="name" required>
 
       <label for="phone">電話：</label>
-      <input type="tel" id="phone" required>
+      <input type="tel" id="phone" name="phone" required>
 
       <label for="payment">付款方式：</label>
-      <select id="payment" required>
+      <select id="payment" name="payment" required>
         <option value="">請選擇</option>
         <option value="atm">轉帳</option>
         <option value="allpay">全支付</option>
@@ -78,12 +115,27 @@
       </select>
 
       <label for="pickup">取貨方式：</label>
-      <select id="pickup" required>
+      <select id="pickup" name="pickup" required>
         <option value="">請選擇</option>
         <option value="store">蝦皮店到店</option>
         <option value="711">7-11超商</option>
         <option value="family">全家超商</option>
       </select>
+
+      <div id="store-name" class="store-input">
+        <label for="storeInput">請輸入取貨店名：</label>
+        <input type="text" id="storeInput" name="storeName">
+      </div>
+
+      <div id="order-summary">
+        <h3>訂購明細</h3>
+        <ul id="summary-list"></ul>
+        <div id="total"></div>
+      </div>
+
+      <!-- 隱藏欄位：要送給 Formspree -->
+      <input type="hidden" name="orderItems" id="orderItems">
+      <input type="hidden" name="totalAmount" id="totalAmount">
 
       <div class="button-group">
         <button type="submit" class="btn">送出訂單</button>
@@ -91,5 +143,46 @@
       </div>
     </form>
   </div>
+
+  <script>
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    const summaryList = document.getElementById('summary-list');
+    const totalDisplay = document.getElementById('total');
+    const pickup = document.getElementById('pickup');
+    const storeInputDiv = document.getElementById('store-name');
+
+    let total = 0;
+
+    if (cart.length === 0) {
+      summaryList.innerHTML = '<li>目前購物車是空的。</li>';
+    } else {
+      cart.forEach(item => {
+        const li = document.createElement('li');
+        li.innerHTML = `<img src="https://via.placeholder.com/30" style="vertical-align: middle; margin-right: 8px;">${item.name} x ${item.quantity} - $${item.price * item.quantity}`;
+        summaryList.appendChild(li);
+        total += item.price * item.quantity;
+      });
+      totalDisplay.textContent = `總金額：$${total}`;
+    }
+
+    pickup.addEventListener('change', function () {
+      if (this.value) {
+        storeInputDiv.style.display = 'block';
+      } else {
+        storeInputDiv.style.display = 'none';
+      }
+    });
+
+    document.getElementById('checkout-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      // 寫入隱藏欄位
+      document.getElementById('orderItems').value = cart.map(i => `${i.name} x ${i.quantity}`).join(', ');
+      document.getElementById('totalAmount').value = total;
+
+      this.submit(); // 手動提交
+      localStorage.removeItem('cart');
+    });
+  </script>
 </body>
 </html>
