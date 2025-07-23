@@ -144,16 +144,18 @@
   </div>
   <script>
     const products = [
-      { name: '玫瑰花茶', price: 50, category: 'daily', image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=300&q=80' },
-      { name: '可愛娃娃1號', price: 299, category: 'dolls' },
-      { name: '東京限定餅乾', price: 180, category: 'snacks' },
-      { name: '和風抹茶糖', price: 150, category: 'snacks' },
-      { name: '櫻花吊飾', price: 120, category: 'daily' },
-      { name: '日式文具組', price: 250, category: 'daily' },
-      { name: '拉麵鑰匙圈', price: 199, category: 'daily' },
-      { name: '可愛娃娃2號', price: 320, category: 'dolls' },
-      { name: '北海道牛奶糖', price: 110, category: 'snacks' },
+      { id: 1, name: '玫瑰花茶', price: 50, category: 'daily', image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=300&q=80' },
+      { id: 2, name: '可愛娃娃1號', price: 299, category: 'dolls' },
+      { id: 3, name: '東京限定餅乾', price: 180, category: 'snacks' },
+      { id: 4, name: '和風抹茶糖', price: 150, category: 'snacks' },
+      { id: 5, name: '櫻花吊飾', price: 120, category: 'daily' },
+      { id: 6, name: '日式文具組', price: 250, category: 'daily' },
+      { id: 7, name: '拉麵鑰匙圈', price: 199, category: 'daily' },
+      { id: 8, name: '可愛娃娃2號', price: 320, category: 'dolls' },
+      { id: 9, name: '北海道牛奶糖', price: 110, category: 'snacks' }
     ];
+    localStorage.setItem("products", JSON.stringify(products));
+
     let currentPage = 1;
     const itemsPerPage = 6;
     let currentCategory = 'all';
@@ -168,7 +170,7 @@
       const filtered = currentCategory === 'all' ? products : products.filter(p => p.category === currentCategory);
       const start = (currentPage - 1) * itemsPerPage;
       const items = filtered.slice(start, start + itemsPerPage);
-      for (const [index, p] of items.entries()) {
+      for (const p of items) {
         const div = document.createElement('div');
         div.className = 'product';
         div.innerHTML = `
@@ -176,7 +178,7 @@
           <h3>${p.name}</h3>
           <p>$${p.price}</p>
         `;
-        div.onclick = () => alert(`${p.name} 詳細頁功能未完成`);
+        div.onclick = () => window.location.href = `product.html?id=${p.id}`;
         grid.appendChild(div);
       }
     }
