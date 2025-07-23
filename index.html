@@ -43,7 +43,7 @@
       cursor: pointer;
     }
     .sidebar {
-      position: absolute;
+      position: fixed;
       top: 0;
       left: -100%;
       width: 80%;
@@ -144,8 +144,8 @@
         grid-template-columns: repeat(2, 1fr);
       }
       .sidebar {
-        width: 100%;
-        max-width: none;
+        width: 80%;
+        max-width: 240px;
       }
     }
   </style>
@@ -168,7 +168,19 @@
     <button class="back-button" onclick="toggleSidebar()">← 返回</button>
   </div>
 
-  <div class="grid" id="product-list"></div>
+  <div class="grid" id="product-list">
+    <div class="product">
+      <img src="https://via.placeholder.com/150" alt="可愛娃娃1號">
+      <div>可愛娃娃1號</div>
+      <div style="color:#d63384; font-weight:bold;">$299</div>
+    </div>
+    <div class="product">
+      <img src="https://via.placeholder.com/150" alt="東京限定餅乾">
+      <div>東京限定餅乾</div>
+      <div style="color:#d63384; font-weight:bold;">$180</div>
+    </div>
+  </div>
+
   <div class="pagination" id="pagination"></div>
   <div id="checkout-page"></div>
 
