@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>購物車</title>
   <style>
     body {
@@ -12,7 +12,7 @@
       padding: 0;
     }
     .container {
-      max-width: 800px;
+      max-width: 600px;
       margin: 40px auto;
       background: #fff;
       padding: 30px;
@@ -22,45 +22,56 @@
     h2 {
       text-align: center;
       color: #d63384;
+      margin-bottom: 20px;
     }
     .cart-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 15px;
+      padding: 15px 0;
       border-bottom: 1px solid #ffe0f0;
     }
     .cart-item img {
-      width: 50px;
-      height: 50px;
+      width: 60px;
+      height: 60px;
       border-radius: 8px;
+      object-fit: cover;
       margin-right: 15px;
     }
     .item-info {
       display: flex;
       align-items: center;
       flex: 1;
+      gap: 15px;
     }
     .item-name {
-      min-width: 120px;
-      font-weight: bold;
+      min-width: 140px;
+      font-weight: 600;
+      color: #d63384;
     }
     select {
-      padding: 5px;
+      padding: 6px 10px;
       border-radius: 8px;
-      margin: 0 10px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      width: 60px;
+      cursor: pointer;
     }
     .price {
       width: 80px;
       text-align: right;
+      font-weight: bold;
+      color: #ff69b4;
     }
     .remove-btn {
       background-color: #ff69b4;
       color: white;
       border: none;
-      padding: 6px 10px;
-      border-radius: 8px;
+      padding: 6px 14px;
+      border-radius: 12px;
       cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-left: 15px;
     }
     .remove-btn:hover {
       background-color: #ff92c2;
@@ -68,8 +79,9 @@
     .total {
       text-align: right;
       font-weight: bold;
-      font-size: 18px;
-      margin-top: 20px;
+      font-size: 20px;
+      color: #d63384;
+      margin-top: 30px;
     }
   </style>
 </head>
@@ -81,20 +93,19 @@
   </div>
 
   <script>
-    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+    let cart = JSON.parse(localStorage.getItem("cart") || "[]");
     const cartContainer = document.getElementById("cart-container");
     const totalPriceEl = document.getElementById("total-price");
 
     function renderCart() {
       cartContainer.innerHTML = "";
-      let total = 0;
-
       if (cart.length === 0) {
-        cartContainer.innerHTML = "<p style='text-align:center;'>購物車是空的。</p>";
+        cartContainer.innerHTML = "<p style='text-align:center; color:#d63384;'>購物車是空的。</p>";
         totalPriceEl.textContent = "";
         return;
       }
 
+      let total = 0;
       cart.forEach((item, index) => {
         const itemTotal = item.price * item.quantity;
         total += itemTotal;
@@ -102,20 +113,19 @@
         const div = document.createElement("div");
         div.className = "cart-item";
         div.innerHTML = `
+          <img src="${item.image || 'https://via.placeholder.com/60'}" alt="${item.name}">
           <div class="item-info">
-            <img src="https://via.placeholder.com/50" alt="商品圖片">
             <div class="item-name">${item.name}</div>
             <select onchange="updateQuantity(${index}, this.value)">
-              ${[...Array(10).keys()].map(i => `<option value="${i+1}" ${item.quantity === i+1 ? "selected" : ""}>${i+1}</option>`).join("")}
+              ${[...Array(10).keys()].map(i =>
+                `<option value="${i+1}" ${item.quantity === i+1 ? "selected" : ""}>${i+1}</option>`).join("")}
             </select>
             <div class="price">$${itemTotal}</div>
+            <button class="remove-btn" onclick="removeItem(${index})">刪除</button>
           </div>
-          <button class="remove-btn" onclick="removeItem(${index})">刪除</button>
         `;
-
         cartContainer.appendChild(div);
       });
-
       totalPriceEl.textContent = `總金額：$${total}`;
     }
 
