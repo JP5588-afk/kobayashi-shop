@@ -3,105 +3,138 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>商品詳情</title>
+  <title>購物車</title>
   <style>
     body {
       font-family: "Segoe UI", "Helvetica Neue", sans-serif;
       background-color: #fff1f7;
       padding: 20px;
     }
-    .container {
-      max-width: 600px;
+    .cart-container {
+      max-width: 700px;
       margin: auto;
       background: white;
       padding: 20px;
       border-radius: 12px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
-    img {
-      width: 100%;
-      border-radius: 12px;
-    }
     h2 {
-      margin-top: 10px;
       color: #d63384;
+      margin-bottom: 20px;
     }
-    .price {
-      font-size: 20px;
-      margin: 10px 0;
+    .cart-item {
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #eee;
+      padding: 10px 0;
+    }
+    .cart-item img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 6px;
+      margin-right: 10px;
+    }
+    .item-info {
+      flex-grow: 1;
+    }
+    .item-info p {
+      margin: 4px 0;
+    }
+    .item-qty {
+      margin-right: 10px;
+    }
+    .item-total {
+      font-weight: bold;
+      color: #d63384;
     }
     .btn {
       background: #ff69b4;
       color: white;
       border: none;
-      padding: 10px 20px;
-      margin-right: 10px;
-      border-radius: 8px;
+      padding: 8px 14px;
+      border-radius: 6px;
       cursor: pointer;
     }
     .btn:hover {
       background: #ff92c2;
     }
-    label, select {
-      font-size: 16px;
-      margin: 10px 0;
-      display: block;
+    .total-price {
+      text-align: right;
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #d63384;
     }
-    select {
-      padding: 6px;
-      border-radius: 6px;
+    .actions {
+      text-align: right;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <img id="product-img" src="" alt="商品圖片">
-    <h2 id="product-name"></h2>
-    <p class="price" id="product-price"></p>
-
-    <label for="quantity">數量：</label>
-    <select id="quantity">
-      <option value="1">1</option>
-      <option value="2">2</option>
-      <option value="3">3</option>
-      <option value="4">4</option>
-      <option value="5">5</option>
-      <option value="6">6</option>
-      <option value="7">7</option>
-      <option value="8">8</option>
-      <option value="9">9</option>
-      <option value="10">10</option>
-    </select>
-
-    <button class="btn" onclick="addToCart()">加入購物車</button>
-    <button class="btn" onclick="history.back()">← 返回</button>
+  <div class="cart-container">
+    <h2>購物車</h2>
+    <div id="cart-items"></div>
+    <div class="total-price" id="total-price">總金額：$0</div>
+    <div class="actions">
+      <button class="btn" onclick="checkout()">下單</button>
+    </div>
   </div>
 
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const id = parseInt(params.get("id"));
-    const products = JSON.parse(localStorage.getItem("products") || "[]");
-    const product = products.find(p => p.id === id);
+    function renderCart() {
+      const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
+      const cartDiv = document.getElementById("cart-items");
+      const totalPriceEl = document.getElementById("total-price");
+      cartDiv.innerHTML = "";
+      let total = 0;
 
-    if (product) {
-      document.getElementById("product-img").src = product.image || "https://via.placeholder.com/300";
-      document.getElementById("product-name").textContent = product.name;
-      document.getElementById("product-price").textContent = `$${product.price}`;
+      cartItems.forEach((item, index) => {
+        const itemTotal = item.price * item.quantity;
+        total += itemTotal;
+
+        const div = document.createElement("div");
+        div.className = "cart-item";
+        div.innerHTML = `
+          <img src="${item.image || 'https://via.placeholder.com/60'}" alt="商品圖片">
+          <div class="item-info">
+            <p><strong>${item.name}</strong></p>
+            <p>$${item.price}</p>
+          </div>
+          <select class="item-qty" onchange="updateQty(${index}, this.value)">
+            ${Array.from({length: 10}, (_, i) => `<option value="${i+1}" ${item.quantity === i+1 ? 'selected' : ''}>${i+1}</option>`).join("")}
+          </select>
+          <div class="item-total">$${itemTotal}</div>
+          <button class="btn" onclick="removeItem(${index})">刪除</button>
+        `;
+        cartDiv.appendChild(div);
+      });
+
+      totalPriceEl.textContent = `總金額：$${total}`;
     }
 
-    function addToCart() {
-      const quantity = parseInt(document.getElementById("quantity").value);
-      if (!product || quantity <= 0) return;
-      let cart = JSON.parse(localStorage.getItem("cart") || "[]");
-      const index = cart.findIndex(i => i.id === product.id);
-      if (index >= 0) {
-        cart[index].quantity += quantity;
-      } else {
-        cart.push({ ...product, quantity });
-      }
+    function updateQty(index, qty) {
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      cart[index].quantity = parseInt(qty);
       localStorage.setItem("cart", JSON.stringify(cart));
-      alert("已加入購物車！");
+      renderCart();
     }
+
+    function removeItem(index) {
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      cart.splice(index, 1);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      renderCart();
+    }
+
+    function checkout() {
+      alert("已送出訂單！");
+      localStorage.removeItem("cart");
+      renderCart();
+    }
+
+    window.onload = renderCart;
   </script>
 </body>
 </html>
