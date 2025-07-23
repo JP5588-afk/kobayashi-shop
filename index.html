@@ -43,6 +43,9 @@
       width: auto;
       margin-left: 10px;
     }
+    #product-grid, #detail-view {
+      display: block;
+    }
   </style>
 </head>
 <body>
@@ -120,6 +123,8 @@
     }
 
     function showCart() {
+      document.getElementById("product-grid").style.display = 'none';
+      document.getElementById("detail-view").style.display = 'none';
       const page = document.getElementById("checkout-page");
       page.style.display = 'block';
       const summary = cart.map(c => {
