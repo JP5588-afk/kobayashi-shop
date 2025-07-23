@@ -111,27 +111,34 @@
     </div>
   </div>
 
-  <script src="products.js"></script>
   <script>
     const params = new URLSearchParams(window.location.search);
     const id = parseInt(params.get("id"));
-    let products = JSON.parse(localStorage.getItem("products") || "[]");
+    let products;
 
-    if (!products.length) {
-      fetch('products.json')
-        .then(res => res.json())
-        .then(data => {
-          products = data;
-          localStorage.setItem("products", JSON.stringify(products));
-          showProduct();
-        });
+    if (localStorage.getItem("products")) {
+      products = JSON.parse(localStorage.getItem("products"));
     } else {
-      showProduct();
+      products = [
+        {
+          id: 1,
+          name: "玫瑰花茶",
+          price: 50,
+          image: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=300&q=80"
+        },
+        {
+          id: 2,
+          name: "北海道牛奶糖",
+          price: 110,
+          image: "https://images.unsplash.com/photo-1572569511254-d8f62f7d6b25?auto=format&fit=crop&w=300&q=80"
+        }
+      ];
+      localStorage.setItem("products", JSON.stringify(products));
     }
 
-    function showProduct() {
-      const product = products.find(p => p.id === id);
-      if (!product) return;
+    const product = products.find(p => p.id === id);
+
+    if (product) {
       document.getElementById("product-img").src = product.image || "https://via.placeholder.com/300";
       document.getElementById("product-name").textContent = product.name;
       document.getElementById("product-price").textContent = `$${product.price}`;
@@ -147,7 +154,6 @@
 
     function addToCart() {
       const quantity = parseInt(document.getElementById("quantity").value);
-      const product = products.find(p => p.id === id);
       if (!product || quantity <= 0) return;
       let cart = JSON.parse(localStorage.getItem("cart") || "[]");
       const index = cart.findIndex(i => i.id === product.id);
