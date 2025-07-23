@@ -1,18 +1,47 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>商品詳情</title>
   <style>
     body {
       font-family: "Segoe UI", "Helvetica Neue", sans-serif;
       background-color: #fff1f7;
-      padding: 20px;
+      margin: 0;
+      padding: 0;
     }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #ffb6c1;
+      color: white;
+      padding: 10px 20px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 20px;
+    }
+    .cart-icon {
+      position: relative;
+      font-size: 20px;
+      cursor: pointer;
+    }
+    .cart-icon span {
+      position: absolute;
+      top: -8px;
+      right: -10px;
+      background: red;
+      color: white;
+      border-radius: 50%;
+      padding: 2px 6px;
+      font-size: 12px;
+    }
+
     .container {
       max-width: 600px;
-      margin: auto;
+      margin: 40px auto;
       background: white;
       padding: 20px;
       border-radius: 12px;
@@ -54,6 +83,14 @@
   </style>
 </head>
 <body>
+
+  <header>
+    <h1>小林日貨鋪</h1>
+    <div class="cart-icon" onclick="window.location.href='cart.html'">
+      🛒<span id="cart-count">0</span>
+    </div>
+  </header>
+
   <div class="container">
     <img id="product-img" src="" alt="商品圖片">
     <h2 id="product-name"></h2>
@@ -61,16 +98,7 @@
 
     <label for="quantity">數量：</label>
     <select id="quantity">
-      <option value="1">1</option>
-      <option value="2">2</option>
-      <option value="3">3</option>
-      <option value="4">4</option>
-      <option value="5">5</option>
-      <option value="6">6</option>
-      <option value="7">7</option>
-      <option value="8">8</option>
-      <option value="9">9</option>
-      <option value="10">10</option>
+      ${[...Array(10)].map((_, i) => `<option value="${i + 1}">${i + 1}</option>`).join('')}
     </select>
 
     <button class="btn" onclick="addToCart()">加入購物車</button>
@@ -100,8 +128,19 @@
         cart.push({ ...product, quantity });
       }
       localStorage.setItem("cart", JSON.stringify(cart));
+      updateCartCount();
       alert("已加入購物車！");
     }
+
+    function updateCartCount() {
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+      document.getElementById("cart-count").textContent = totalCount;
+    }
+
+    // 初始化購物車數字
+    updateCartCount();
   </script>
+
 </body>
 </html>
