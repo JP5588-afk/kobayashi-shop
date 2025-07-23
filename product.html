@@ -114,11 +114,10 @@
   <script>
     const params = new URLSearchParams(window.location.search);
     const id = parseInt(params.get("id"));
-    let products;
+    let products = JSON.parse(localStorage.getItem("products") || "[]");
 
-    if (localStorage.getItem("products")) {
-      products = JSON.parse(localStorage.getItem("products"));
-    } else {
+    // 若 localStorage 沒產品資料，先寫入預設兩筆
+    if (!products.length) {
       products = [
         {
           id: 1,
@@ -155,13 +154,16 @@
     function addToCart() {
       const quantity = parseInt(document.getElementById("quantity").value);
       if (!product || quantity <= 0) return;
+
       let cart = JSON.parse(localStorage.getItem("cart") || "[]");
       const index = cart.findIndex(i => i.id === product.id);
+
       if (index >= 0) {
         cart[index].quantity += quantity;
       } else {
         cart.push({ ...product, quantity });
       }
+
       localStorage.setItem("cart", JSON.stringify(cart));
       updateCartCount();
       alert("已加入購物車！");
